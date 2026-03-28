@@ -123,10 +123,10 @@ const Routes = () => {
             <Sparkles className="w-4 h-4 text-emerald-600" />
             <span className="text-sm font-semibold text-emerald-600 tracking-wide uppercase">AI Optimized Nav</span>
           </div>
-          <h1 className="text-[clamp(1.5rem,5vw,3.5rem)] font-black text-gray-900 tracking-tight leading-none mb-6">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-none mb-6">
             Smart Path, <span className="text-emerald-500">Pure Air.</span>
           </h1>
-          <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
+          <p className="text-gray-500 text-base font-medium max-w-xl mx-auto leading-relaxed">
             Personalized routes that prioritize your respiratory health by avoiding high-AQI zones in real-time.
           </p>
         </div>
@@ -135,17 +135,18 @@ const Routes = () => {
           {/* SEARCH & MAP COLUMN */}
           <div className="lg:col-span-8 space-y-8">
             {/* Search Input Card */}
-            <Card className="border-none bg-white rounded-[2.5rem] shadow-xl shadow-emerald-900/5 p-6 md:p-10">
+            <Card className="border-none bg-white rounded-[2rem] shadow-lg shadow-emerald-900/5 p-6 md:p-8">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
                   <div className="absolute left-6 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
                      <MapPin className="text-emerald-500 w-4 h-4" />
                   </div>
                   <Input
+                    list="indian-cities"
                     value={origin}
                     onChange={(e) => setOrigin(e.target.value)}
-                    placeholder="Starting point..."
-                    className="pl-16 h-16 bg-gray-50 border-gray-100 text-lg font-bold rounded-2xl focus:bg-white focus:border-emerald-400 transition-all shadow-inner"
+                    placeholder="Find routes..."
+                    className="pl-16 h-14 bg-gray-50 border-gray-100 text-base font-semibold rounded-2xl focus:bg-white focus:border-emerald-400 transition-all shadow-inner"
                   />
                 </div>
                 <div className="flex-1 relative">
@@ -153,16 +154,69 @@ const Routes = () => {
                      <Navigation className="text-red-500 w-4 h-4" />
                   </div>
                   <Input
+                    list="indian-cities"
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
-                    placeholder="Enter destination..."
-                    className="pl-16 h-16 bg-gray-50 border-gray-100 text-lg font-bold rounded-2xl focus:bg-white focus:border-emerald-400 transition-all shadow-inner"
+                    placeholder="Find routes..."
+                    className="pl-16 h-14 bg-gray-50 border-gray-100 text-base font-semibold rounded-2xl focus:bg-white focus:border-emerald-400 transition-all shadow-inner"
                   />
+                  <datalist id="indian-cities">
+                    <option value="Delhi" />
+                    <option value="Dehradun" />
+                    <option value="Mumbai" />
+                    <option value="Bangalore" />
+                    <option value="Pune" />
+                    <option value="Chennai" />
+                    <option value="Kolkata" />
+                    <option value="Hyderabad" />
+                    <option value="Ahmedabad" />
+                    <option value="Surat" />
+                    <option value="Jaipur" />
+                    <option value="Lucknow" />
+                    <option value="Kanpur" />
+                    <option value="Nagpur" />
+                    <option value="Indore" />
+                    <option value="Thane" />
+                    <option value="Bhopal" />
+                    <option value="Visakhapatnam" />
+                    <option value="Patna" />
+                    <option value="Vadodara" />
+                    <option value="Ghaziabad" />
+                    <option value="Ludhiana" />
+                    <option value="Agra" />
+                    <option value="Nashik" />
+                    <option value="Faridabad" />
+                    <option value="Meerut" />
+                    <option value="Rajkot" />
+                    <option value="Kalyan-Dombivli" />
+                    <option value="Vasai-Virar" />
+                    <option value="Varanasi" />
+                    <option value="Srinagar" />
+                    <option value="Aurangabad" />
+                    <option value="Dhanbad" />
+                    <option value="Amritsar" />
+                    <option value="Navi Mumbai" />
+                    <option value="Allahabad" />
+                    <option value="Ranchi" />
+                    <option value="Howrah" />
+                    <option value="Coimbatore" />
+                    <option value="Jabalpur" />
+                    <option value="Gwalior" />
+                    <option value="Vijayawada" />
+                    <option value="Jodhpur" />
+                    <option value="Madurai" />
+                    <option value="Raipur" />
+                    <option value="Kota" />
+                    <option value="Guwahati" />
+                    <option value="Chandigarh" />
+                    <option value="Solapur" />
+                    <option value="Hubli-Dharwad" />
+                  </datalist>
                 </div>
                 <Button
                   onClick={handleSearch}
                   disabled={loading}
-                  className="h-16 px-10 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl shadow-lg shadow-emerald-200 text-lg active:scale-95 transition-all"
+                  className="h-14 px-8 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl shadow-lg shadow-emerald-200 text-base active:scale-95 transition-all"
                 >
                   {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Search className="w-6 h-6" />}
                 </Button>
@@ -170,30 +224,14 @@ const Routes = () => {
             </Card>
 
             {/* Map Viewer Card */}
-            <Card className="border-none bg-white rounded-[3rem] shadow-2xl shadow-emerald-900/10 overflow-hidden relative">
-              <CardContent className="p-4 h-[600px] relative">
-                {routes.length > 0 && originCoords && destinationCoords ? (
-                  <RouteMap
-                    routes={routes}
-                    selectedRouteId={selectedRoute}
-                    origin={originCoords}
-                    destination={destinationCoords}
-                  />
-                ) : (
-                  <div className="h-full flex flex-col items-center justify-center bg-gray-50/50">
-                    <div className="w-24 h-24 rounded-[2rem] bg-white border border-gray-100 rotate-12 flex items-center justify-center mb-6 shadow-sm">
-                        <RouteIcon className="w-10 h-10 text-emerald-300" />
-                    </div>
-                    <p className="text-gray-400 font-bold text-xl uppercase tracking-widest">Connect the dots</p>
-                    <p className="text-gray-400 text-sm mt-2 font-medium">Search for a destination to render the air quality map</p>
-                  </div>
-                )}
-                {loading && (
-                    <div className="absolute inset-4 bg-white/60 backdrop-blur-sm z-50 rounded-[2.5rem] flex flex-col items-center justify-center">
-                        <div className="w-16 h-16 rounded-full border-4 border-emerald-100 border-t-emerald-500 animate-spin mb-4" />
-                        <p className="font-black text-emerald-600 uppercase tracking-widest text-xs">Calibrating Path...</p>
-                    </div>
-                )}
+            <Card className="border-none bg-white rounded-[2rem] shadow-xl shadow-emerald-900/10 overflow-hidden relative">
+              <CardContent className="p-0 h-[60vh] md:h-[600px] relative overflow-hidden">
+                <RouteMap
+                  routes={routes}
+                  selectedRouteId={selectedRoute}
+                  origin={originCoords}
+                  destination={destinationCoords}
+                />
               </CardContent>
             </Card>
           </div>
@@ -210,7 +248,7 @@ const Routes = () => {
 
             {loading && routes.length === 0 ? (
                 [1,2,3].map(i => (
-                    <Card key={i} className="bg-white/50 border-none rounded-[2rem] h-32 animate-pulse mb-4"></Card>
+                    <Card key={i} className="bg-white/50 border-none rounded-3xl h-24 animate-pulse mb-4"></Card>
                 ))
             ) : routes.length > 0 ? (
                 <div className="space-y-4">
@@ -218,7 +256,7 @@ const Routes = () => {
                       <Card
                         key={route.id}
                         onClick={() => setSelectedRoute(route.id)}
-                        className={`cursor-pointer transition-all duration-500 border-2 rounded-[2.5rem] p-8 relative overflow-hidden ${
+                        className={`cursor-pointer transition-all duration-500 border-2 rounded-[1.5rem] p-6 relative overflow-hidden ${
                           selectedRoute === route.id
                             ? "border-emerald-500 bg-white shadow-2xl shadow-emerald-900/10 -translate-y-1"
                             : "border-transparent bg-white/60 hover:border-emerald-100 hover:bg-white"
@@ -228,7 +266,7 @@ const Routes = () => {
                         <CardContent className="p-0">
                           <div className="flex justify-between items-start mb-4">
                             <div>
-                                <h3 className={`text-xl font-black tracking-tighter leading-none ${selectedRoute === route.id ? 'text-emerald-600' : 'text-gray-800'}`}>
+                                <h3 className={`text-lg font-extrabold tracking-tighter leading-none ${selectedRoute === route.id ? 'text-emerald-600' : 'text-gray-800'}`}>
                                     {route.name}
                                 </h3>
                                 <div className="flex gap-2 mt-2">
@@ -259,7 +297,7 @@ const Routes = () => {
                                         <div key={i} className="h-full flex-1" style={{ backgroundColor: getAQIColor(s.aqi), opacity: s.aqi ? 1 : 0.1 }}></div>
                                     ))}
                                 </div>
-                                <div className="p-5 bg-emerald-50 border border-emerald-100 rounded-[1.8rem]">
+                                <div className="p-5 bg-emerald-50 border border-emerald-100 rounded-[1.2rem]">
                                     <p className="text-gray-900 font-black text-sm mb-1 uppercase tracking-tight flex items-center gap-2">
                                         <Leaf className="w-4 h-4 text-emerald-500" /> Wellness Intel
                                     </p>
@@ -289,17 +327,17 @@ const Routes = () => {
                         <Zap className="w-6 h-6 text-emerald-500" />
                     </div>
                     <div>
-                        <h3 className="text-3xl font-black text-gray-900 tracking-tight">Segment Analysis</h3>
+                        <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">Segment Analysis</h3>
                         <p className="text-gray-500 font-medium">Deep-dive into air quality data across your selected journey.</p>
                     </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {routes[selectedRoute]?.pollutionSegments.slice(0, 6).map((s, i) => (
-                        <div key={i} className="p-8 bg-white rounded-[2.5rem] border border-emerald-50 shadow-sm hover:shadow-xl transition-all duration-500 relative group overflow-hidden">
+                        <div key={i} className="p-6 bg-white rounded-[1.5rem] border border-emerald-50 shadow-sm hover:shadow-xl transition-all duration-500 relative group overflow-hidden">
                              <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50/50 rounded-full blur-3xl -z-10 group-hover:bg-emerald-50 transition-colors"></div>
                             <div className="flex items-start justify-between mb-6">
-                                <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center font-black text-gray-300 border border-gray-100">
+                                <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center font-black text-gray-300 border border-gray-100">
                                     {i + 1}
                                 </div>
                                 <div className="text-right">
@@ -307,13 +345,13 @@ const Routes = () => {
                                     <p className={`font-black uppercase text-sm ${s.zone === "High" ? 'text-red-500' : s.zone === "Medium" ? 'text-orange-500' : 'text-emerald-500'}`}>{s.zone || "SAFE"}</p>
                                 </div>
                             </div>
-                            <h4 className="text-xl font-black text-gray-800 tracking-tight mb-2 truncate uppercase">{s.area || "Checkpoint"}</h4>
+                            <h4 className="text-lg font-extrabold text-gray-800 tracking-tight mb-2 truncate uppercase">{s.area || "Checkpoint"}</h4>
                             <p className="text-xs font-bold text-gray-400 mb-6">{s.lat?.toFixed(3)}°N, {s.lon?.toFixed(3)}°E</p>
                             
                             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Air Quality<br/>Index</p>
                                 <div className="w-px h-6 bg-gray-200 mx-2"></div>
-                                <p className="text-3xl font-black tracking-tighter" style={{ color: getAQIColor(s.aqi) }}>{s.aqi ?? "N/A"}</p>
+                                <p className="text-2xl font-extrabold tracking-tighter" style={{ color: getAQIColor(s.aqi) }}>{s.aqi ?? "N/A"}</p>
                             </div>
                         </div>
                     ))}
@@ -326,9 +364,9 @@ const Routes = () => {
         <div className="fixed bottom-10 right-10 z-[100] animate-bounce-slow">
             <Button
               onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`, "_blank")}
-              className="bg-emerald-500 hover:bg-emerald-600 h-20 px-12 rounded-[2.5rem] shadow-2xl shadow-emerald-400/40 text-white font-black text-xl flex items-center gap-4 group"
+              className="bg-emerald-500 hover:bg-emerald-600 h-14 px-8 shadow-xl shadow-emerald-400/30 text-white font-bold text-base flex items-center gap-3 rounded-full group"
             >
-              <Navigation className="w-8 h-8 group-hover:rotate-12 transition-transform" />
+              <Navigation className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               NAVIGATE
             </Button>
         </div>

@@ -56,10 +56,11 @@ const FitBounds = ({ origin, destination }) => {
 
 /* ===== MAIN MAP ===== */
 const RouteMap = ({ routes, selectedRouteId, origin, destination }) => {
-  if (!origin || !destination) return null;
+  if (!origin) origin = {lat: 28.6139, lon: 77.2090, name: "Delhi"};
 
   const originPos = [origin.lat, origin.lon];
-  const destPos = [destination.lat, destination.lon];
+  const destPos = destination ? [destination.lat, destination.lon] : null;
+  
 
   const selectedRoute = routes.find((r) => r.id === selectedRouteId);
   const labelIndexes = new Set();
@@ -75,10 +76,11 @@ const RouteMap = ({ routes, selectedRouteId, origin, destination }) => {
 
   return (
     <MapContainer
+      style={{ zIndex: 1, filter: "hue-rotate(45deg) saturate(110%) brightness(1.02)" }}
       center={originPos}
-      zoom={6}
-      className="h-[500px] w-full rounded-xl"
-      style={{ zIndex: 1 }}
+      zoom={destination ? 6 : 4}
+      zoomControl={false}
+      className="h-full w-full rounded-[3rem]"
     >
       {/* 🗺️ LIGHT MAP TILE — CartoDB Positron (Google Maps style) */}
       <TileLayer
@@ -86,15 +88,16 @@ const RouteMap = ({ routes, selectedRouteId, origin, destination }) => {
         attribution='&copy; <a href="https://carto.com/">CARTO</a>'
       />
 
-      <FitBounds origin={origin} destination={destination} />
+      {destination && <FitBounds origin={origin} destination={destination} />}
 
       {/* Markers */}
       <Marker position={originPos} icon={originIcon}>
         <Popup><strong>Origin:</strong> {origin.name}</Popup>
       </Marker>
-      <Marker position={destPos} icon={destIcon}>
-        <Popup><strong>Destination:</strong> {destination.name}</Popup>
-      </Marker>
+      {destPos && <Marker position={destPos} icon={destIcon}>
+        <Popup><strong>Destination:</strong> {destination?.name}</Popup>
+      </Marker>}
+
 
       {routes.map((route) => {
         const isSelected = route.id === selectedRouteId;

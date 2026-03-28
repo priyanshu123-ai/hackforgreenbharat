@@ -69,7 +69,7 @@ const Dashboard = () => {
         <Navbar />
         <div className="flex flex-col items-center gap-6">
           <div className="w-16 h-16 rounded-full border-4 border-emerald-100 border-t-emerald-500 animate-spin" />
-          <p className="text-emerald-600 font-black uppercase tracking-widest text-xs">Assembling Your Impact...</p>
+          <p className="text-emerald-600 font-bold uppercase tracking-widest text-xs">Assembling Your Impact...</p>
         </div>
       </div>
     );
@@ -86,23 +86,23 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto space-y-12">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative">
-              <div className="absolute -top-20 -left-20 w-80 h-80 bg-emerald-100/40 blur-[120px] rounded-full -z-10"></div>
+              <div className="absolute -top-20 -left-20 w-80 h-80 bg-emerald-100/40 blur-3xl opacity-50 rounded-full -z-10"></div>
             <div>
                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-4">
                   <Sparkles className="w-4 h-4 text-emerald-600" />
-                  <span className="text-sm font-black text-emerald-600 tracking-wide uppercase">Environmental Intelligence</span>
+                  <span className="text-sm font-bold text-emerald-600 tracking-wide uppercase">Environmental Intelligence</span>
               </div>
-               <h1 className="text-5xl font-black text-gray-900 tracking-tight leading-none">
+               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight leading-none">
                 Earth Guardian, <span className="text-emerald-500">
                   {assessment?.userId?.name?.split(' ')[0] || "Eco Warrior"}
                 </span>
               </h1>
-              <p className="text-gray-500 mt-4 text-xl font-medium max-w-2xl">
+              <p className="text-gray-500 mt-4 text-lg font-normal max-w-xl text-gray-500">
                 Your journey towards a sustainable future is being mapped in real-time.
               </p>
             </div>
             <Link to="/questionnaire">
-               <Button className="h-16 px-10 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl shadow-2xl shadow-emerald-200 transition-all active:scale-95 flex items-center gap-2">
+               <Button className="h-14 px-8 text-base bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-lg rounded-2xl shadow-2xl shadow-emerald-200 transition-all active:scale-95 flex items-center gap-2">
                 UPDATE HABITS
                 <ArrowUpRight className="w-6 h-6" />
               </Button>
@@ -112,11 +112,11 @@ const Dashboard = () => {
           {/* ROW 1 → Score + Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* Eco Score Card */}
-            <div className="bg-white rounded-[3rem] p-10 border border-emerald-50 shadow-2xl shadow-emerald-900/5 relative overflow-hidden group">
+            <div className="bg-white rounded-2xl p-8 border border-emerald-50 shadow-2xl shadow-emerald-900/5 relative overflow-hidden group">
                <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:scale-110 transition-transform duration-700">
-                 <Leaf size={240} className="text-emerald-500" />
+                 <Leaf size={100} className="text-emerald-500" />
                </div>
-               <h3 className="text-2xl font-black text-gray-900 mb-10 flex items-center gap-4">
+               <h3 className="text-2xl font-bold text-gray-900 mb-10 flex items-center gap-4">
                  <div className="w-12 h-12 rounded-[1.2rem] bg-emerald-50 flex items-center justify-center border border-emerald-100">
                     <Leaf className="w-6 h-6 text-emerald-500" />
                  </div>
@@ -124,9 +124,9 @@ const Dashboard = () => {
                </h3>
 
                <div className="flex flex-col items-center py-6">
-                  <PollutionScoreRing score={score} size={280} strokeWidth={20} />
+                  <PollutionScoreRing score={score} size={150} strokeWidth={12} />
                   <div className="mt-12 text-center">
-                    <p className={`text-4xl font-black tracking-tighter ${meta.text} uppercase`}>
+                    <p className={`text-3xl font-bold tracking-tighter ${meta.text} uppercase`}>
                       {assessment?.level || "Analyzing..."}
                     </p>
                     <p className="text-gray-400 font-bold mt-2 uppercase tracking-[0.2em] text-xs">Current Resilience Level</p>
@@ -141,7 +141,7 @@ const Dashboard = () => {
           {/* ROW 2 → AI Analysis (FULL WIDTH) */}
           <Card className="border-none bg-white rounded-[3.5rem] shadow-2xl shadow-emerald-900/5 overflow-hidden">
             <CardHeader className="bg-purple-500/5 px-10 pt-10 pb-6">
-              <CardTitle className="flex items-center gap-4 text-gray-900 text-2xl font-black uppercase tracking-tight">
+              <CardTitle className="flex items-center gap-4 text-gray-900 text-2xl font-bold uppercase tracking-tight">
                 <div className="w-12 h-12 rounded-[1.2rem] flex items-center justify-center bg-purple-500 shadow-lg shadow-purple-100">
                   <Brain className="w-6 h-6 text-white" />
                 </div>
@@ -154,10 +154,10 @@ const Dashboard = () => {
                 <p className="italic">"{assessment.aiExplanation}"</p>
               ) : (
                 <div className="flex flex-col items-center py-16">
-                  <div className="w-20 h-20 rounded-[2rem] bg-amber-50 flex items-center justify-center mb-6">
+                  <div className="w-20 h-20 rounded-2xl bg-amber-50 flex items-center justify-center mb-6">
                     <AlertTriangle className="w-10 h-10 text-amber-500" />
                   </div>
-                  <p className="text-gray-900 font-black text-xl mb-2">Analysis Missing</p>
+                  <p className="text-gray-900 font-bold text-xl mb-2">Analysis Missing</p>
                   <p className="text-gray-400 font-medium max-w-sm text-center">
                     Complete your periodic assessment to unlock personalized AI insights and optimization paths.
                   </p>
@@ -169,11 +169,11 @@ const Dashboard = () => {
           {/* ROW 3 → Precautions */}
           {assessment && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="bg-white rounded-[3rem] p-10 border border-emerald-50 shadow-xl shadow-emerald-900/5 relative overflow-hidden">
+              <div className="bg-white rounded-2xl p-8 border border-emerald-50 shadow-xl shadow-emerald-900/5 relative overflow-hidden">
                  <div className="absolute -bottom-10 -right-10 opacity-5">
                     <ShieldCheck size={180} className="text-emerald-500" />
                  </div>
-                 <h3 className="flex items-center gap-4 text-gray-900 font-black text-2xl mb-10 uppercase tracking-tight">
+                 <h3 className="flex items-center gap-4 text-gray-900 font-bold text-2xl mb-10 uppercase tracking-tight">
                     <div className="w-12 h-12 rounded-[1.2rem] bg-emerald-50 flex items-center justify-center border border-emerald-100">
                       <ShieldCheck className="w-6 h-6 text-emerald-600" />
                     </div>
@@ -181,19 +181,19 @@ const Dashboard = () => {
                  </h3>
                  <ul className="space-y-6 relative z-10">
                     {assessment.precautions.personal.map((p, i) => (
-                      <li key={i} className="flex gap-6 text-gray-800 bg-emerald-50/20 p-6 rounded-[2rem] border border-emerald-50 hover:bg-white hover:shadow-lg transition-all">
-                        <span className="w-10 h-10 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-sm font-black shrink-0 shadow-lg shadow-emerald-100">{i+1}</span>
+                      <li key={i} className="flex gap-6 text-gray-800 bg-emerald-50/20 p-6 rounded-2xl border border-emerald-50 hover:bg-white hover:shadow-lg transition-all">
+                        <span className="w-10 h-10 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 shadow-lg shadow-emerald-100">{i+1}</span>
                         <span className="font-bold text-base leading-snug">{p}</span>
                       </li>
                     ))}
                   </ul>
               </div>
 
-              <div className="bg-white rounded-[3rem] p-10 border border-blue-50 shadow-xl shadow-blue-900/5 relative overflow-hidden">
+              <div className="bg-white rounded-2xl p-8 border border-blue-50 shadow-xl shadow-blue-900/5 relative overflow-hidden">
                  <div className="absolute -bottom-10 -right-10 opacity-5">
                     <Users size={180} className="text-blue-500" />
                  </div>
-                 <h3 className="flex items-center gap-4 text-gray-900 font-black text-2xl mb-10 uppercase tracking-tight">
+                 <h3 className="flex items-center gap-4 text-gray-900 font-bold text-2xl mb-10 uppercase tracking-tight">
                     <div className="w-12 h-12 rounded-[1.2rem] bg-blue-50 flex items-center justify-center border border-blue-100">
                       <Users className="w-6 h-6 text-blue-600" />
                     </div>
@@ -201,8 +201,8 @@ const Dashboard = () => {
                  </h3>
                  <ul className="space-y-6 relative z-10">
                     {assessment.precautions.area.map((p, i) => (
-                      <li key={i} className="flex gap-6 text-gray-800 bg-blue-50/20 p-6 rounded-[2rem] border border-blue-50 hover:bg-white hover:shadow-lg transition-all">
-                        <span className="w-10 h-10 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-sm font-black shrink-0 shadow-lg shadow-blue-100">{i+1}</span>
+                      <li key={i} className="flex gap-6 text-gray-800 bg-blue-50/20 p-6 rounded-2xl border border-blue-50 hover:bg-white hover:shadow-lg transition-all">
+                        <span className="w-10 h-10 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 shadow-lg shadow-blue-100">{i+1}</span>
                         <span className="font-bold text-base leading-snug">{p}</span>
                       </li>
                     ))}
@@ -218,12 +218,12 @@ const Dashboard = () => {
                  <div className="w-20 h-20 rounded-[2.5rem] bg-sky-500 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-sky-100 group-hover:scale-110 transition-transform">
                     <Wind className="w-10 h-10 text-white" />
                  </div>
-                 <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight uppercase">Live Path Insight</h3>
+                 <h3 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight uppercase">Live Path Insight</h3>
                  <p className="text-gray-500 max-w-md mx-auto mb-10 text-lg font-medium">
                    Unlock real-time atmosphere analysis and AQI-optimized routing across your city.
                  </p>
                  <Link to="/pollution">
-                   <Button className="h-16 px-12 bg-gray-900 hover:bg-black text-white rounded-2xl font-black text-lg transition-all shadow-xl active:scale-95">
+                   <Button className="h-14 px-10 text-base bg-gray-900 hover:bg-black text-white rounded-2xl font-bold text-lg transition-all shadow-xl active:scale-95">
                      EXPLORE REAL-TIME MAP
                    </Button>
                  </Link>

@@ -96,7 +96,7 @@ const Leaderboard = () => {
                 <Trophy className="w-4 h-4 text-emerald-600" />
                 <span className="text-sm font-semibold text-emerald-600 tracking-wide uppercase">Global Eco Champions</span>
             </div>
-            <h1 className="text-5xl font-black text-gray-900 tracking-tight leading-tight">
+            <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
               Community <span className="text-emerald-500">Hall of Fame</span>
             </h1>
             <p className="text-gray-500 font-medium text-lg mt-2 max-w-xl">
@@ -127,12 +127,12 @@ const Leaderboard = () => {
             {/* Rank 2 */}
             <Card
               onClick={() => setSelectedUser(topThree[1])}
-              className="cursor-pointer bg-white border-2 border-emerald-50 rounded-[3rem] hover:shadow-2xl transition-all duration-500 w-full md:w-[260px] h-[320px] order-2 md:order-1 flex flex-col items-center justify-center p-8 group relative overflow-hidden"
+              className="cursor-pointer bg-white border-2 border-emerald-50 rounded-[3rem] hover:shadow-2xl transition-all duration-500 w-full md:w-[230px] h-[280px] order-2 md:order-1 flex flex-col items-center justify-center p-8 group relative overflow-hidden"
             >
                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-slate-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="relative z-10 flex flex-col items-center">
                 <div className="relative mb-6">
-                    <Avatar className="w-24 h-24 border-4 border-slate-100 shadow-lg">
+                    <Avatar className="w-20 h-20 border-4 border-slate-100 shadow-lg">
                       <AvatarImage src={topThree[1].avatar} />
                       <AvatarFallback className="bg-slate-50 text-slate-400 font-black text-2xl">{topThree[1].name?.[0]}</AvatarFallback>
                     </Avatar>
@@ -151,15 +151,15 @@ const Leaderboard = () => {
             {/* Rank 1 - THE KING */}
             <Card
               onClick={() => setSelectedUser(topThree[0])}
-              className="cursor-pointer bg-white border-2 border-emerald-100 rounded-[3.5rem] shadow-2xl shadow-emerald-900/10 hover:shadow-3xl transition-all duration-500 w-full md:w-[320px] h-[420px] order-1 md:order-2 flex flex-col items-center justify-center p-8 group relative overflow-hidden z-20 border-b-emerald-500"
+              className="cursor-pointer bg-white border-2 border-emerald-100 rounded-[3.5rem] shadow-2xl shadow-emerald-900/10 hover:shadow-3xl transition-all duration-500 w-full md:w-[280px] h-[340px] order-1 md:order-2 flex flex-col items-center justify-center p-8 group relative overflow-hidden z-20 border-b-emerald-500"
             >
                 <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-emerald-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="relative z-10 flex flex-col items-center">
                 <div className="relative mb-8">
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2">
-                        <Crown className="w-14 h-14 text-yellow-400 drop-shadow-lg animate-pulse" />
+                        <Crown className="w-10 h-10 text-yellow-400 drop-shadow-lg animate-pulse" />
                     </div>
-                    <Avatar className="w-32 h-32 border-4 border-emerald-200 shadow-2xl">
+                    <Avatar className="w-20 h-20 border-4 border-emerald-200 shadow-2xl">
                       <AvatarImage src={topThree[0].avatar} />
                       <AvatarFallback className="bg-emerald-50 text-emerald-400 font-black text-4xl">{topThree[0].name?.[0]}</AvatarFallback>
                     </Avatar>
@@ -178,7 +178,7 @@ const Leaderboard = () => {
             {/* Rank 3 */}
             <Card
               onClick={() => setSelectedUser(topThree[2])}
-              className="cursor-pointer bg-white border-2 border-emerald-50 rounded-[3rem] hover:shadow-2xl transition-all duration-500 w-full md:w-[260px] h-[280px] order-3 md:order-3 flex flex-col items-center justify-center p-8 group relative overflow-hidden"
+              className="cursor-pointer bg-white border-2 border-emerald-50 rounded-[3rem] hover:shadow-2xl transition-all duration-500 w-full md:w-[230px] h-[250px] order-3 md:order-3 flex flex-col items-center justify-center p-8 group relative overflow-hidden"
             >
                 <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-orange-50/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="relative z-10 flex flex-col items-center">
@@ -242,7 +242,7 @@ const Leaderboard = () => {
                             )}
                         </div>
 
-                        <Avatar className="w-14 h-14 border-2 border-white shadow-sm ring-1 ring-gray-100">
+                        <Avatar className="w-10 h-10 border-2 border-white shadow-sm ring-1 ring-gray-100">
                           <AvatarImage src={user.avatar} />
                           <AvatarFallback className="font-black bg-gray-50 text-gray-300">{user.name?.[0]}</AvatarFallback>
                         </Avatar>
@@ -289,7 +289,7 @@ const Leaderboard = () => {
           <DialogContent className="bg-white border-none rounded-[3rem] p-10 max-w-lg shadow-2xl">
             <DialogHeader className="flex flex-col items-center text-center">
               <div className="relative mb-6">
-                <Avatar className="w-24 h-24 border-4 border-emerald-100 shadow-xl">
+                <Avatar className="w-20 h-20 border-4 border-emerald-100 shadow-xl">
                     <AvatarImage src={selectedUser?.avatar} />
                     <AvatarFallback className="font-black text-2xl">{selectedUser?.name?.[0]}</AvatarFallback>
                 </Avatar>

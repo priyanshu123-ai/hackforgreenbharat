@@ -54,15 +54,15 @@ const Navbar = () => {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-[#f0faf5]/95 backdrop-blur-md border-b border-emerald-100/50 shadow-sm transition-all duration-300">
-      <div className="max-w-[1400px] mx-auto px-6">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-[1400px] mx-auto px-8">
+        <div className="flex justify-between items-center h-20">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shadow-sm">
-              <Leaf className="w-4 h-4 text-white" />
+          <Link to="/" className="flex items-center gap-2.5 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-md shadow-emerald-200">
+              <Leaf className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-lg text-emerald-600 font-space-grotesk">
+            <span className="font-bold text-xl text-emerald-600 font-space-grotesk tracking-tight">
               EcoSense
             </span>
           </Link>
@@ -72,10 +72,10 @@ const Navbar = () => {
             {mainNavLinks.map((link) => (
               <Link key={link.path} to={link.path}>
                 <button
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[15px] font-semibold transition-all duration-300
                     ${isActive(link.path)
-                      ? "bg-emerald-500 text-white shadow-[0_4px_12px_rgba(16,185,129,0.35)]"
-                      : "text-gray-500 hover:text-emerald-700 hover:bg-emerald-50/80"
+                      ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/25 scale-105"
+                      : "text-gray-600 hover:text-emerald-700 hover:bg-emerald-100/60"
                     }`}
                 >
                   <link.icon className="w-3.5 h-3.5" />
@@ -86,12 +86,12 @@ const Navbar = () => {
           </div>
 
           {/* Right Side */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="relative">
-                    <Avatar className="w-8 h-8 border-2 border-emerald-200">
+                  <button className="relative hover:scale-105 transition-transform">
+                    <Avatar className="w-10 h-10 border-2 border-emerald-100 shadow-sm">
                       {user?.profile?.profilePhoto ? (
                         <AvatarImage src={user.profile.profilePhoto} />
                       ) : (
@@ -160,7 +160,7 @@ const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link to="/login">
-                <button className="px-4 py-1.5 text-sm font-semibold text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg shadow-sm transition-all duration-200">
+                <button className="px-6 py-2.5 text-[15px] font-semibold text-white bg-emerald-500 hover:bg-emerald-600 rounded-full shadow-md shadow-emerald-200 transition-all duration-200 hover:scale-105">
                   Get Started
                 </button>
               </Link>

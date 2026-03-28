@@ -181,10 +181,10 @@ const Questionnaire = () => {
           <div className="mb-12">
             <div className="flex justify-between items-end mb-4">
               <div>
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight leading-none uppercase">Analysis <span className="text-emerald-500">Progress</span></h2>
+                <h2 className="text-3xl font-bold text-gray-900 tracking-tight leading-none uppercase">Analysis <span className="text-emerald-500">Progress</span></h2>
                 <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-2">{currentStep + 1} of {total} Milestones</p>
               </div>
-              <span className="text-4xl font-black text-emerald-500 tracking-tighter">
+              <span className="text-4xl font-bold text-emerald-500 tracking-tighter">
                 {Math.round(progress)}%
               </span>
             </div>
@@ -198,7 +198,7 @@ const Questionnaire = () => {
           </div>
 
           {/* Question Card */}
-          <Card className="bg-white border-none rounded-[3rem] shadow-2xl shadow-emerald-900/5 overflow-hidden relative">
+          <Card className="bg-white border-none rounded-2xl shadow-lg shadow-emerald-900/5 overflow-hidden relative">
             <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
                 <Sparkles size={120} className="text-emerald-500" />
             </div>
@@ -207,12 +207,12 @@ const Questionnaire = () => {
                 <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500 border border-emerald-100 shadow-sm">
                   {currentQuestion.icon}
                 </div>
-                <span className="text-xs font-black text-emerald-600 uppercase tracking-[0.2em] bg-emerald-50 px-3 py-1 rounded-lg">
+                <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider text-[10px] bg-emerald-50 px-3 py-1 rounded-lg">
                   {currentQuestion.category}
                 </span>
               </div>
 
-              <CardTitle className="text-gray-900 text-3xl font-black leading-tight tracking-tight uppercase">
+              <CardTitle className="text-gray-900 text-3xl font-bold leading-tight tracking-tight uppercase">
                 {currentQuestion.question}
               </CardTitle>
 
@@ -238,12 +238,12 @@ const Questionnaire = () => {
                     />
                   </div>
 
-                  <div className="flex items-center justify-center p-10 bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-100 relative group">
+                  <div className="flex items-center justify-center p-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 relative group">
                     <div className="text-center">
-                        <span className="text-7xl font-black text-emerald-500 tracking-tighter group-hover:scale-110 transition-transform block">
+                        <span className="text-7xl font-bold text-emerald-500 tracking-tighter group-hover:scale-110 transition-transform block">
                         {answers[currentQuestion.id] ?? currentQuestion.min}
                         </span>
-                        <span className="text-gray-400 font-black text-xl uppercase tracking-widest mt-2 block">
+                        <span className="text-gray-400 font-bold text-xl uppercase tracking-widest mt-2 block">
                         {currentQuestion.unit}
                         </span>
                     </div>
@@ -261,14 +261,14 @@ const Questionnaire = () => {
                   {currentQuestion.options.map((option) => (
                     <Label
                       key={option.value}
-                      className={`flex items-center space-x-4 p-6 rounded-[1.8rem] border-2 cursor-pointer transition-all duration-300 relative overflow-hidden group ${
+                      className={`flex items-center space-x-4 p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 relative overflow-hidden group ${
                         answers[currentQuestion.id] === option.value
                           ? "border-emerald-500 bg-white shadow-xl shadow-emerald-900/10"
                           : "border-gray-50 bg-gray-50/50 hover:border-emerald-200 hover:bg-white"
                       }`}
                     >
                       <RadioGroupItem value={option.value} className="w-6 h-6 border-2 border-emerald-200 text-emerald-500" />
-                      <span className={`text-lg font-bold tracking-tight uppercase ${answers[currentQuestion.id] === option.value ? 'text-emerald-700' : 'text-gray-600'}`}>
+                      <span className={`text-base font-medium tracking-wide ${answers[currentQuestion.id] === option.value ? 'text-emerald-700' : 'text-gray-600'}`}>
                         {option.label}
                       </span>
                       {answers[currentQuestion.id] === option.value && (
@@ -285,7 +285,7 @@ const Questionnaire = () => {
                   variant="outline"
                   onClick={handlePrev}
                   disabled={currentStep === 0}
-                  className="h-16 flex-1 rounded-2xl border-none bg-gray-50 text-gray-400 font-black text-base hover:bg-gray-100 transition-all uppercase tracking-widest"
+                  className="h-12 flex-1 rounded-2xl border-none bg-gray-50 text-gray-400 font-bold text-base hover:bg-gray-100 transition-all uppercase tracking-widest"
                 >
                   <ChevronLeft className="w-5 h-5 mr-2" /> Previous
                 </Button>
@@ -293,7 +293,7 @@ const Questionnaire = () => {
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed || isCalculating}
-                  className="h-16 flex-[1.5] bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-100 transition-all active:scale-95 uppercase tracking-widest"
+                  className="h-12 flex-[1.5] bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-lg rounded-2xl shadow-xl shadow-emerald-100 transition-all active:scale-95 uppercase tracking-widest"
                 >
                   {isCalculating ? (
                       <div className="flex items-center gap-3">
@@ -314,7 +314,7 @@ const Questionnaire = () => {
             </CardContent>
           </Card>
           
-          <p className="text-center mt-12 text-gray-400 font-bold text-[10px] uppercase tracking-[0.3em]">Environmental Intelligence Unit • EcoSense V4.0</p>
+          <p className="text-center mt-12 text-gray-400 text-xs font-medium">Environmental Intelligence Unit • EcoSense V4.0</p>
         </div>
       </main>
       

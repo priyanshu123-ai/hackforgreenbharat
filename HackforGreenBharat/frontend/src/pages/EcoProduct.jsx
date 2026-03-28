@@ -194,7 +194,7 @@ const PRODUCTS = [
 ];
 
 const Tag = ({ children }) => (
-  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 uppercase tracking-tight">
+  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-gray-1000/20 uppercase tracking-tight">
     {children}
   </span>
 );
@@ -213,8 +213,8 @@ const Rating = ({ value }) => {
 
 const ProductCard = ({ p, onAdd, onDelete }) => {
   return (
-    <Card className="bg-white border border-emerald-50 overflow-hidden hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-500 relative group rounded-[2.5rem]">
-      <div className="relative h-48 w-full overflow-hidden">
+    <Card className="bg-white border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-500 relative group rounded-2xl">
+      <div className="relative h-40 w-full overflow-hidden">
         <img src={p.image} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
         <div className="absolute top-4 left-4 flex flex-wrap gap-1">
           {p.badges.map((b) => (
@@ -232,7 +232,7 @@ const ProductCard = ({ p, onAdd, onDelete }) => {
       <div className="p-6 space-y-4">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h3 className="text-lg font-black text-gray-800 tracking-tight leading-tight">{p.name}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{p.name}</h3>
             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">{p.brand} • {p.category}</p>
           </div>
           <Rating value={p.rating} />
@@ -240,15 +240,15 @@ const ProductCard = ({ p, onAdd, onDelete }) => {
         <p className="text-sm font-medium text-gray-500 leading-relaxed line-clamp-2">{p.whyBetter}</p>
         
         <div className="flex items-center justify-between pt-2 border-t border-gray-50">
-          <span className="text-2xl font-black text-emerald-600 tracking-tighter">₹{p.price}</span>
+          <span className="text-2xl font-bold text-emerald-600 tracking-tighter">₹{p.price}</span>
           <div className="text-right">
-             <span className="text-[10px] font-black text-gray-400 uppercase block mb-0.5">Impact Score</span>
+             <span className="text-[10px] font-bold text-gray-400 uppercase block mb-0.5">Impact Score</span>
              <span className="text-xs font-bold text-emerald-500 flex items-center gap-1 justify-end"><Leaf className="w-3 h-3"/> {p.co2SavedKg}kg CO₂/yr</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 pt-2">
-          <Button onClick={() => onAdd(p)} className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl h-12 shadow-lg shadow-emerald-100 transition-all active:scale-95">
+          <Button onClick={() => onAdd(p)} className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl h-12 shadow-sm text-sm transition-all active:scale-95">
             <ShoppingCart className="w-4 h-4 mr-2" /> Add
           </Button>
           <a href={p.link} target="_blank" rel="noreferrer" className="h-12 inline-flex items-center justify-center gap-2 rounded-2xl bg-gray-50 border border-gray-100 text-gray-700 font-bold hover:bg-white hover:border-emerald-200 transition-all text-sm">
@@ -256,7 +256,7 @@ const ProductCard = ({ p, onAdd, onDelete }) => {
           </a>
         </div>
         <div className="flex justify-center">
-            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest flex items-center gap-1.5 bg-emerald-50/50 px-3 py-1 rounded-full"><Recycle className="w-3 h-3"/> AQI Exposure Impact: {p.aqiImpact}</span>
+            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-1.5 bg-emerald-50/50 px-3 py-1 rounded-full"><Recycle className="w-3 h-3"/> AQI Exposure Impact: {p.aqiImpact}</span>
         </div>
       </div>
     </Card>
@@ -340,14 +340,14 @@ const EcoProducts = () => {
     <div className="min-h-screen bg-[#f0faf5] pb-24">
       <Navbar />
 
-      <section className="pt-[140px] pb-12 text-center relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none"></div>
+      <section className="pt-32 pb-12 text-center relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-gradient-to-b from-emerald-50/50 to-transparent pointer-events-none"></div>
         <div className="max-w-[1200px] mx-auto px-6 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-gray-1000/20 mb-6">
             <Sparkles className="w-4 h-4 text-emerald-600" />
             <span className="text-sm font-semibold text-emerald-600">Premium Eco Marketplace</span>
           </div>
-          <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black text-gray-900 tracking-tight leading-[0.9]">
+          <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] font-bold text-gray-900 tracking-tight leading-[0.9]">
             Sustainable <span className="text-emerald-500">Living</span> Starts Here.
           </h1>
           <p className="mt-6 text-gray-500 text-lg font-medium max-w-2xl mx-auto">
@@ -358,7 +358,7 @@ const EcoProducts = () => {
 
       <div className="max-w-[1240px] mx-auto px-6">
         {/* FILTERS & SEARCH */}
-        <div className="bg-white/80 backdrop-blur-xl border border-emerald-50 rounded-[3rem] p-6 shadow-xl shadow-emerald-900/5 mb-12">
+        <div className="bg-white/80 backdrop-blur-xl border border-gray-100 rounded-2xl p-6 shadow-sm mb-12">
           <div className="flex flex-col lg:flex-row gap-6 items-center">
             <div className="flex-1 w-full relative">
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -394,13 +394,13 @@ const EcoProducts = () => {
 
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-14 px-8 rounded-2xl shadow-lg shadow-emerald-200">
+                    <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-14 px-8 rounded-2xl shadow-sm">
                       <Plus className="w-5 h-5 mr-2"/> Share Product
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-white border-none rounded-[3rem] p-10 max-w-2xl shadow-2xl">
+                  <DialogContent className="bg-white border-none rounded-2xl p-10 max-w-2xl shadow-2xl">
                     <DialogHeader>
-                      <DialogTitle className="text-3xl font-black text-gray-900">Add Eco Product</DialogTitle>
+                      <DialogTitle className="text-3xl font-bold text-gray-900">Add Eco Product</DialogTitle>
                       <DialogDescription className="text-gray-500 font-medium text-lg">Suggest a sustainable alternative to the community.</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-6 py-6">
@@ -440,7 +440,7 @@ const EcoProducts = () => {
                         </div>
                     </div>
                     <DialogFooter>
-                      <Button onClick={handleAddProduct} className="h-14 w-full bg-emerald-500 text-white font-bold text-lg rounded-2xl shadow-lg shadow-emerald-200">Catalog Product</Button>
+                      <Button onClick={handleAddProduct} className="h-14 w-full bg-emerald-500 text-white font-bold text-lg rounded-2xl shadow-sm">Catalog Product</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -450,8 +450,8 @@ const EcoProducts = () => {
           <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
             {[{k:"Avg. CO₂ saved/yr",v:"+32 kg"},{k:"Plastic avoided",v:"~180 bags"},{k:"Exposure drop",v:"-15% AQI"},{k:"Green score boost",v:"+90 pts"}].map(x=> (
               <div key={x.k} className="bg-emerald-50/50 rounded-2xl p-4 border border-emerald-100/50">
-                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">{x.k}</p>
-                <p className="text-xl font-black text-gray-800">{x.v}</p>
+                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">{x.k}</p>
+                <p className="text-xl font-bold text-gray-800">{x.v}</p>
               </div>
             ))}
           </div>
@@ -471,12 +471,12 @@ const EcoProducts = () => {
                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
                   <Heart className="w-6 h-6 text-emerald-500 fill-emerald-500" />
                </div>
-               <h2 className="text-3xl font-black text-gray-900 tracking-tight">Saved Favorites</h2>
+               <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Saved Favorites</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {wishlist.map((w) => (
-                <Card key={w.id} className="bg-white border border-emerald-50 p-4 flex items-center gap-4 rounded-[1.5rem] shadow-sm">
+                <Card key={w.id} className="bg-white border border-gray-100 p-4 flex items-center gap-4 rounded-[1.5rem] shadow-sm">
                   <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-50 group">
                     <img src={w.image} alt={w.name} className="w-full h-full object-cover transition-transform group-hover:scale-110"/>
                   </div>
@@ -505,11 +505,11 @@ const EcoProducts = () => {
             title:"Compost Kitchen Waste",
             desc:"Reduces landfill methane by 60% and creates natural fertilizer.",
           }].map((t, i) => (
-            <div key={i} className="p-10 rounded-[3rem] bg-white border border-emerald-50 shadow-sm hover:shadow-md transition-shadow">
+            <div key={i} className="p-10 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100 mb-6">
                 <Filter className="w-5 h-5 text-emerald-500" />
               </div>
-              <h3 className="text-xl font-black text-gray-900 tracking-tight mb-3">{t.title}</h3>
+              <h3 className="text-xl font-bold text-gray-900 tracking-tight mb-3">{t.title}</h3>
               <p className="text-gray-500 font-medium leading-relaxed">{t.desc}</p>
             </div>
           ))}
