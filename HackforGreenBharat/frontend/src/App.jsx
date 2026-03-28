@@ -24,6 +24,8 @@ import BillScanner from "./pages/BillScanner";
 import BillResult from "./pages/BillResult";
 import PathwayListener from "./components/PathwayListener";
 import PathwayDashboard from "./pages/PathwayDashboard";
+import EcoStores from "./pages/EcoStores";
+import Community from "./pages/Community";
 
 const App = () => {
   return (
@@ -59,6 +61,8 @@ const App = () => {
 
 
         <Route path="/pathway-demo" element={<PathwayDashboard />} />
+         <Route path="/eco-store" element={<EcoStores />}/>
+         <Route path="/community" element={<Community />}/>
       </Routes>
     </div>
   );

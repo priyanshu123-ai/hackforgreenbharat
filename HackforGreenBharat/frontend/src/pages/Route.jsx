@@ -29,16 +29,28 @@ const getAQIColor = (aqi) => {
   return "#991B1B";
 };
 
-const speak = (text) => {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const msg = new SpeechSynthesisUtterance(text);
+const unlockSpeech = () => {
+  if (!("speechSynthesis" in window)) return;
+
+  const msg = new SpeechSynthesisUtterance("Audio enabled");
+  msg.volume = 1; // MUST be audible once
+  msg.rate = 1;
   msg.lang = "en-IN";
-  msg.rate = 0.95;
+
   window.speechSynthesis.speak(msg);
 };
 
 
+const speak = (text) => {
+  if (!("speechSynthesis" in window)) return;
+
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "en-IN";
+  msg.rate = 0.95;
+  msg.volume = 1;
+
+  window.speechSynthesis.speak(msg);
+};
 
 
 const Routes = () => {
@@ -50,46 +62,54 @@ const Routes = () => {
   const [destinationCoords, setDestinationCoords] = useState(null);
   const [loading, setLoading] = useState(false);
 
-   const lastAlertRef = useRef(null);
+  const lastAlertRef = useRef(null);
   const voiceEnabledRef = useRef(true);
 
+  /* 🔊 POLLUTION ALERT (VOICE + TOAST) */
+
+
   useEffect(() => {
-  if (!routes.length) return;
+    if (!routes.length) return;
 
-  const segments = routes[selectedRoute]?.pollutionSegments;
-  if (!segments || segments.length === 0) return;
+    const segments = routes[selectedRoute]?.pollutionSegments;
+    if (!segments?.length) return;
 
-  const high = segments.find((s) => s.aqi >= 150);
-  if (!high) return;
+    const high = segments.find((s) => s.aqi >= 150);
+    if (!high) return;
 
-  // prevent repeat alerts
-  if (lastAlertRef.current === high.zone) return;
-  lastAlertRef.current = high.zone;
+    const level = high.aqi >= 200 ? "SEVERE" : "HIGH";
+    if (lastAlertRef.current === level) return;
 
-  const message =
-    high.aqi >= 200
-      ? "Severe pollution ahead. Close car windows, turn on air recirculation, and avoid exposure."
-      : "High pollution detected ahead. Please wear a mask and keep vehicle windows closed.";
+    lastAlertRef.current = level;
 
-  toast.warn(message, {
-    position: "top-center",
-    autoClose: 8000,
-    pauseOnHover: true,
-  });
+    const message =
+      level === "SEVERE"
+        ? "Severe pollution ahead. Close windows and enable air recirculation."
+        : "High pollution detected ahead. Please wear a mask.";
 
-  if (voiceEnabledRef.current) {
-    speak(message);
-  }
-}, [routes, selectedRoute]);
+    toast.warn(message, { position: "top-center", autoClose: 8000 });
+
+    if (voiceEnabledRef.current) {
+      speak(message);
+    }
+  }, [routes, selectedRoute]);
 
   const handleSearch = async () => {
+     unlockSpeech(); 
+  if (window.speechSynthesis) {
+  const unlock = new SpeechSynthesisUtterance("Starting route");
+  unlock.volume = 0;
+  window.speechSynthesis.speak(unlock);
+}
+
+
+    lastAlertRef.current = null; // reset alerts on new search
+
     if (!destination) return;
     setLoading(true);
 
     try {
-      /* 1️⃣ Try frontend cache */
       const cached = getCachedRoute(origin, destination);
-
       if (cached) {
         setRoutes(cached.routes || []);
         setSelectedRoute(cached.routes?.[0]?.id || 0);
@@ -98,17 +118,12 @@ const Routes = () => {
         return;
       }
 
-      
-
-      /* 2️⃣ Call backend */
       const res = await axios.post(`${serverUrl}/api/v2/routes`, {
         originCity: origin,
         destinationCity: destination,
       });
 
-      /* 3️⃣ Save to frontend cache */
       setCachedRoute(origin, destination, res.data);
-
       setRoutes(res.data.routes || []);
       setSelectedRoute(res.data.routes?.[0]?.id || 0);
       setOriginCoords(res.data.origin);
@@ -118,13 +133,12 @@ const Routes = () => {
     } finally {
       setLoading(false);
     }
-
   };
 
   window.stopPollutionVoice = () => {
-  window.speechSynthesis.cancel();
-  voiceEnabledRef.current = false;
-};
+    window.speechSynthesis.cancel();
+    voiceEnabledRef.current = false;
+  };
 
 
   return (
@@ -132,14 +146,14 @@ const Routes = () => {
       <Navbar />
 
       <div className="container mx-auto px-4 py-8 mt-16">
-        {/* Header */}
+        {/* Header - Humanized */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-emerald-400">AQI-Aware</span>{" "}
-            <span className="text-white">Route Planner</span>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+            <span className="text-emerald-400">Your Journey,</span>{" "}
+            <span className="text-white">Your Air.</span>
           </h1>
-          <p className="text-gray-400 text-lg">
-            Find the cleanest route to your destination
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto italic">
+            "Every breath counts. Let's find the path that cares for you."
           </p>
         </div>
 
@@ -155,18 +169,18 @@ const Routes = () => {
                     <Input
                       value={origin}
                       onChange={(e) => setOrigin(e.target.value)}
-                      placeholder="From city"
-                      className="pl-10 bg-transparent border-emerald-500/30 text-white"
+                      placeholder="My starting point..."
+                      className="pl-10 h-12 bg-white/5 border-emerald-500/20 text-white rounded-xl focus:border-emerald-500"
                     />
                   </div>
 
                   <div className="relative flex-1">
-                    <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400" />
+                    <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400" />
                     <Input
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
-                      placeholder="To city"
-                      className="pl-10 bg-transparent border-emerald-500/30 text-white"
+                      placeholder="Where should we go?"
+                      className="pl-10 h-12 bg-white/5 border-amber-500/20 text-white rounded-xl focus:border-amber-500"
                     />
                   </div>
 
@@ -220,46 +234,72 @@ const Routes = () => {
               <Card
                 key={route.id}
                 onClick={() => setSelectedRoute(route.id)}
-                className={`cursor-pointer border-2 ${
+                className={`cursor-pointer transition-all duration-300 transform hover:scale-[1.02] border-2 ${
                   selectedRoute === route.id
-                    ? "border-emerald-500"
-                    : "border-transparent"
-                } bg-[rgba(15,25,23,0.9)]`}
+                    ? "border-emerald-500 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.1)]"
+                    : "border-white/5 bg-white/5"
+                } rounded-[2rem]`}
               >
-                <CardContent className="p-5">
-                  <div className="flex justify-between mb-3">
-                    <h3 className="text-white font-semibold">{route.name}</h3>
-                    <AQIBadge value={route.avgAQI} size="sm" />
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className={`text-lg font-bold ${selectedRoute === route.id ? 'text-emerald-400' : 'text-white'}`}>
+                        {route.name}
+                      </h3>
+                      <div className="flex gap-2 mt-1">
+                         {route.avgAQI < 60 && <span className="bg-emerald-500/20 text-emerald-400 text-[9px] px-2 py-0.5 rounded-full border border-emerald-500/30 uppercase font-bold">Purest Air</span>}
+                         {route.name.includes("Swift") && <span className="bg-amber-500/20 text-amber-400 text-[9px] px-2 py-0.5 rounded-full border border-amber-500/30 uppercase font-bold">Time Saver</span>}
+                      </div>
+                    </div>
+                    <AQIBadge value={route.avgAQI} size="lg" />
                   </div>
 
-                  <div className="flex gap-4 text-gray-400 text-sm mb-3">
-                    <span className="flex gap-1">
-                      <Clock className="w-4 h-4" />
+                  {/* Travel Stats */}
+                  <div className="flex gap-6 text-gray-400 text-sm my-4 bg-black/20 p-3 rounded-2xl">
+                    <span className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-amber-400" />
                       {route.duration}
                     </span>
-                    <span className="flex gap-1">
-                      <RouteIcon className="w-4 h-4" />
+                    <span className="flex items-center gap-2">
+                      <RouteIcon className="w-4 h-4 text-emerald-400" />
                       {route.distance}
                     </span>
                   </div>
 
-                  {/* AQI bar */}
-                  <div className="flex gap-1 mb-3">
-                    {route.pollutionSegments?.slice(0, 6).map((s, i) => (
-                      <div
-                        key={i}
-                        className="flex-1 h-2 rounded-full"
-                        style={{
-                          backgroundColor: getAQIColor(s.aqi),
-                        }}
-                      />
-                    ))}
+                  {/* Visual AQI Gradient */}
+                  <div className="space-y-1 mb-4">
+                    <p className="text-[10px] text-gray-500 uppercase font-medium">Air consistency along path</p>
+                    <div className="flex gap-1.5 h-1.5">
+                      {route.pollutionSegments?.slice(0, 10).map((s, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 rounded-full"
+                          style={{
+                            backgroundColor: getAQIColor(s.aqi),
+                            opacity: s.aqi ? 1 : 0.2
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
 
-                  {route.avgAQI > 100 && (
-                    <div className="flex gap-2 text-amber-400 text-sm">
-                      <AlertTriangle className="w-4 h-4" />
-                      Mask recommended
+                  {/* Human Tip Card */}
+                  {selectedRoute === route.id && (
+                    <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-500">
+                      <div className="flex gap-3">
+                        <div className="bg-emerald-500 p-2 rounded-xl h-fit">
+                          <AlertTriangle className="w-4 h-4 text-black" />
+                        </div>
+                        <div>
+                          <p className="text-white text-sm font-semibold mb-1">Travel Advice</p>
+                          <p className="text-emerald-100/70 text-xs leading-relaxed">
+                            {route.healthAdvice}
+                          </p>
+                          <p className="text-amber-400 text-[10px] mt-2 italic">
+                            💡 {route.travelTip}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -372,6 +412,17 @@ const Routes = () => {
               </div>
             </div>
           )}
+
+        {/* Human Touch - Eco Tip Footer */}
+        <div className="mt-16 text-center pb-20">
+           <div className="inline-block p-8 bg-gradient-to-br from-emerald-500/5 to-amber-500/5 border border-white/5 rounded-[3rem] max-w-2xl relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px] rounded-full" />
+             <p className="text-emerald-400 font-bold uppercase tracking-widest text-xs mb-3">Today's Mindfulness</p>
+             <p className="text-gray-300 text-lg leading-relaxed italic">
+               "Choosing the cleaner path isn't just about your health—it's a small vote for a greener planet. Every kilometer where you breathe clean air is a win for everyone."
+             </p>
+           </div>
+        </div>
 
         {/* Google Navigation */}
         {routes.length > 0 && (

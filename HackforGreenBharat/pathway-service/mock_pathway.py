@@ -14,7 +14,9 @@ def log_request_info():
         return jsonify({"status": "ok"}), 200
 
 # Configuration
-BACKEND_URL = os.environ.get("BACKEND_URL", "https://hackforgreenbharat.onrender.com/api/v9/alert") 
+BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:3000/api/v9/alert") 
+
+# https://hackforgreenbharat.onrender.com
 # Note: Ensure this matches the backend route! (v9/alert)
 
 # Mock pollution data

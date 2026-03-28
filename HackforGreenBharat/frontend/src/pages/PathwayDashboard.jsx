@@ -12,7 +12,7 @@ const PathwayDashboard = () => {
   useEffect(() => {
     const pollInterval = setInterval(async () => {
       try {
-        const res = await axios.get("https://hackforgreenbharat.onrender.com/api/v9/alert");
+        const res = await axios.get("http://localhost:3000/api/v9/alert");
         if (res.data.success && res.data.data) {
           const newData = res.data.data;
           setMetrics(newData);
@@ -39,7 +39,7 @@ const PathwayDashboard = () => {
       ? { user_id: 'demo_user', lat: 28.7041, lon: 77.1025 }
       : { user_id: 'demo_user', lat: 12.9716, lon: 77.5946 };
       
-    axios.post("https://hackforgreenbharat-1.onrender.com/v1/inputs", loc)
+    axios.post("http://localhost:8081/v1/inputs", loc)
       .then(() => toast.success(`Simulated ${type === 'danger' ? 'High Pollution Point' : 'Clean Point'}`))
       .catch((e) => toast.error("Failed to send: " + e.message));
   };

@@ -7,7 +7,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthProvider from "./components/context/context";
 
-export const serverUrl = "https://hackforgreenbharat.onrender.com"
+import { serverUrl } from "./config";
+export { serverUrl };
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

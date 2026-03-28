@@ -12,6 +12,8 @@ import router from "./route/challengeRoutes.js";
 import AiRouter from "./route/ecoAi.js";
 import billrouter from "./route/billRoutes.js";
 import pathwayRouter from "./route/pathwayRoute.js";
+import storeRouter from "./route/storeRoute.js";
+import communityRouter from "./route/communityRoutes.js";
 
 dotenv.config();
 
@@ -44,8 +46,11 @@ app.use("/api/v6", router);
 app.use("/api/v7", AiRouter);
 app.use("/api/v8", billrouter);
 app.use("/api/v9", pathwayRouter);
+app.use("/api/v10", storeRouter);
+app.use("/api/v11", communityRouter);
 
 /* PORT (Render compatible) */
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

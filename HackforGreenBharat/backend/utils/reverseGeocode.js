@@ -1,30 +1,50 @@
 import axios from "axios";
 
+// In-memory cache to prevent redundant hits
+const cache = new Map();
+
 export const reverseGeocode = async (lat, lon) => {
+  // Round to 3 decimal places (~110m precision) for common areas
+  const roundedLat = parseFloat(lat).toFixed(3);
+  const roundedLon = parseFloat(lon).toFixed(3);
+  const cacheKey = `${roundedLat},${roundedLon}`;
+
+  if (cache.has(cacheKey)) {
+    return cache.get(cacheKey);
+  }
+
   try {
-    // 🚀 Using BigDataCloud Free API (Much Faster, No Rate Limit for client-side use style)
-    const url = "https://api.bigdatacloud.net/data/reverse-geocode-client";
+    const url = "https://nominatim.openstreetmap.org/reverse";
 
     const res = await axios.get(url, {
       params: {
-        latitude: lat,
-        longitude: lon,
-        localityLanguage: "en",
+        lat: lat,
+        lon: lon,
+        format: "json",
       },
-      timeout: 10000, // 10s is enough for this fast API
+      headers: {
+        "User-Agent": "hackforgreenbharat-app-v2",
+      },
+      timeout: 15000, // Increased timeout
     });
 
     const data = res.data;
-    if (!data) return "Along Route";
+    let result = "Along Route";
 
-    // 🔥 SMART FALLBACK for BigDataCloud
-    return (
-      data.locality ||
-      data.city ||
-      data.principalSubdivision ||
-      data.countryName ||
-      "Along Route"
-    );
+    if (data && data.address) {
+      result =
+        data.address.suburb ||
+        data.address.city_district ||
+        data.address.city ||
+        data.address.town ||
+        data.address.village ||
+        data.address.state ||
+        data.address.country ||
+        "Along Route";
+    }
+
+    cache.set(cacheKey, result);
+    return result;
   } catch (err) {
     console.error("Reverse Geocode Error:", err.message);
     return "Along Route";

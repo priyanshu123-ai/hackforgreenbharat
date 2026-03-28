@@ -7,7 +7,7 @@ export const calculateAQI_PM25 = (pm25) => {
     { cL: 150.5, cH: 250.4, aL: 201, aH: 300 },
     { cL: 250.5, cH: 350.4, aL: 301, aH: 400 },
     { cL: 350.5, cH: 500.4, aL: 401, aH: 500 }
-  ];
+  ];    
 
   for (const r of table) {
     if (pm25 >= r.cL && pm25 <= r.cH) {

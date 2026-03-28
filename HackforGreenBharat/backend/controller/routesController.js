@@ -134,7 +134,6 @@ export const routeController = async (req, res) => {
       const avgAQI = validAQI.length
         ? Math.round(validAQI.reduce((a, b) => a + b, 0) / validAQI.length)
         : null;
-
       routes.push({
         id: i,
         name: `Route ${i + 1}`,
@@ -148,19 +147,61 @@ export const routeController = async (req, res) => {
       });
     }
 
+    /* 🕵️ Find characteristics to assign names */
+    if (routes.length === 0) {
+      throw new Error("No routes found from OSRM");
+    }
+
+    const findCleanest = routes.reduce((prev, curr) => (prev.avgAQI < curr.avgAQI ? prev : curr), routes[0]);
+    const findFastest = routes.reduce((prev, curr) => (parseFloat(prev.duration) < parseFloat(curr.duration) ? prev : curr), routes[0]);
+
+    const humanizedRoutes = routes.map((route) => {
+      let personality = "Balanced Voyager ✨";
+      let healthAdvice = "Safe for most travelers.";
+      let travelTip = "Keep an eye on the air as you go.";
+
+      if (route.id === findCleanest.id) personality = "The Nature-Lover 🍃";
+      if (route.id === findFastest.id && route.id !== findCleanest.id) personality = "Swift Discovery ⚡";
+      if (route.id === findCleanest.id && route.id === findFastest.id) personality = "The Perfect Path ✨";
+
+      if (route.avgAQI <= 50) {
+        healthAdvice = "Fresh air ahead! Perfect for a walk or bike ride.";
+        travelTip = "Great time to visit local parks.";
+      } else if (route.avgAQI <= 100) {
+        healthAdvice = "Air is fair. Enjoy your journey.";
+        travelTip = "A pleasant route with moderate air.";
+      } else if (route.avgAQI <= 200) {
+        healthAdvice = "Breathe carefully. Sensitive groups should wear a mask.";
+        travelTip = "Consider keeping windows slightly up.";
+      } else {
+        healthAdvice = "Severe pollution detected. Avoid opening windows.";
+        travelTip = "Enable air recirculation and stay safe.";
+      }
+
+      return {
+        ...route,
+        name: personality, // Human name
+        healthAdvice,
+        travelTip,
+      };
+    });
+
     const response = {
       success: true,
       origin,
       destination,
-      routes,
+      routes: humanizedRoutes,
     };
 
     aqiCache.set(routeCacheKey, response);
     res.json(response);
   } catch (err) {
+    console.error("ROUTE CONTROLLER ERROR:", err);
+    import('fs').then(fs => fs.writeFileSync('backend-error.log', err.stack));
     res.status(500).json({
       success: false,
       message: err.message,
+      stack: err.stack,
     });
   }
 };
