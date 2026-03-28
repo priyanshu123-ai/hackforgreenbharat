@@ -122,28 +122,28 @@ const LiveAQISection = () => {
   const mask = getMaskRecommendation(data.aqi);
 
   return (
-    <section className="py-24 relative">
+    <section className="py-16 relative">
       <div className="max-w-[1280px] mx-auto px-4">
         {/* HEADER */}
-        <div className="text-center mb-14">
-          <h2 className="text-3xl font-bold text-white">
-            Current Air Quality in{" "}
-            <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-800">
+            Current Air Quality In{" "}
+            <span className="text-emerald-500 font-bold">
               {data.city}
             </span>
           </h2>
 
-          <div className="mt-3 flex justify-center gap-4 text-sm text-gray-400">
+          <div className="mt-3 flex justify-center gap-4 text-sm text-gray-500">
             <span className="flex items-center gap-1">
               <MapPin size={14} /> {data.lat.toFixed(4)}, {data.lon.toFixed(4)}
             </span>
             <span className="flex items-center gap-1">
               <RefreshCw size={14} /> {lastUpdated.toLocaleTimeString()}
             </span>
-             {data.source === 'Pathway Live Stream' && (
-                <span className="flex items-center gap-1 text-green-400 animate-pulse font-medium">
-                  <Wind size={14} /> Source: Pathway AI Stream
-                </span>
+            {data.source === 'Pathway Live Stream' && (
+              <span className="flex items-center gap-1 text-emerald-500 animate-pulse font-medium">
+                <Wind size={14} /> Source: Pathway AI Stream
+              </span>
             )}
           </div>
         </div>
@@ -151,44 +151,44 @@ const LiveAQISection = () => {
         {/* GRID */}
         <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6 mb-8">
           {/* AQI */}
-          <div className="p-8 bg-[rgba(15,25,23,0.7)] border border-[rgba(37,58,52,0.5)] rounded-2xl text-center">
-            <p className="text-xs uppercase text-gray-400 mb-3">
+          <div className="p-8 bg-[#e8f5e9] border border-emerald-200 rounded-2xl text-center shadow-md">
+            <p className="text-xs uppercase text-gray-500 tracking-widest mb-3">
               Air Quality Index
             </p>
-            <p className="text-6xl font-bold text-orange-400">
+            <p className="text-6xl font-bold text-emerald-600 mb-3">
               {data.aqi}
             </p>
             <AQIBadge value={data.aqi} size="lg" />
           </div>
 
           {/* MASK */}
-          <div className="p-8 bg-[rgba(15,25,23,0.7)] border border-[rgba(37,58,52,0.5)] rounded-2xl">
-            <p className="text-xs uppercase text-gray-400 mb-4">
+          <div className="p-8 bg-[#e8f5e9] border border-emerald-200 rounded-2xl shadow-md">
+            <p className="text-xs uppercase text-gray-500 tracking-widest mb-4">
               Mask Recommendation
             </p>
 
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-xl bg-purple-500/20 flex items-center justify-center text-4xl">
+              <div className="w-20 h-20 rounded-xl bg-emerald-100 flex items-center justify-center text-4xl">
                 {mask.icon}
               </div>
               <div>
-                <p className="text-xl font-semibold text-purple-400">
+                <p className="text-xl font-semibold text-emerald-700">
                   {mask.text}
                 </p>
-                <p className="text-sm text-gray-400">Based on AQI</p>
+                <p className="text-sm text-gray-500">Based on AQI</p>
               </div>
             </div>
 
-            <div className="mt-4 flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-3 rounded-xl">
-              <Shield size={16} className="text-green-400" />
-              <span className="text-sm text-gray-300">
+            <div className="mt-5 flex items-center gap-2 bg-emerald-100 border border-emerald-300 px-4 py-3 rounded-xl">
+              <Shield size={16} className="text-emerald-600" />
+              <span className="text-sm text-gray-600">
                 Outdoor activities: Avoid
               </span>
             </div>
           </div>
 
           {/* WEATHER */}
-          <div className="p-8 bg-[rgba(15,25,23,0.7)] border border-[rgba(37,58,52,0.5)] rounded-2xl">
+          <div className="p-8 bg-[#e8f5e9] border border-emerald-200 rounded-2xl shadow-md">
             <Stat icon={<Thermometer />} label="Temperature" value={`${data.temperature}°C`} />
             <Stat icon={<Droplets />} label="Humidity" value={`${data.humidity}%`} />
             <Stat icon={<Wind />} label="Wind Speed" value={`${data.windSpeed} km/h`} />
@@ -197,19 +197,19 @@ const LiveAQISection = () => {
 
         {/* POLLUTION LINK */}
         <Link to="/pollution" className="block">
-          <div className="flex items-center justify-between p-6 rounded-2xl border border-red-500/20 bg-red-500/10 hover:shadow-lg">
+          <div className="flex items-center justify-between p-5 rounded-2xl border border-red-300/40 bg-red-50 hover:bg-red-100 hover:shadow-md transition-all duration-200">
             <div className="flex items-center gap-4">
-              <Factory className="w-7 h-7 text-red-500" />
+              <Factory className="w-6 h-6 text-red-500" />
               <div>
-                <h3 className="text-lg font-semibold text-white">
-                  View Pollution Sources & Solutions
+                <h3 className="text-base font-semibold text-red-500">
+                  View Pollution Sources &amp; Solutions
                 </h3>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-500">
                   Learn what causes pollution and how to reduce it
                 </p>
               </div>
             </div>
-            <ArrowRight className="text-red-500" />
+            <ArrowRight className="text-red-400" />
           </div>
         </Link>
       </div>
@@ -219,12 +219,12 @@ const LiveAQISection = () => {
 
 /* SMALL STAT */
 const Stat = ({ icon, label, value }) => (
-  <div className="flex justify-between items-center mb-4">
-    <div className="flex items-center gap-3 text-gray-400">
+  <div className="flex justify-between items-center mb-5 last:mb-0">
+    <div className="flex items-center gap-3 text-gray-600">
       {icon}
-      {label}
+      <span>{label}</span>
     </div>
-    <span className="font-semibold text-white">{value}</span>
+    <span className="font-bold text-gray-800">{value}</span>
   </div>
 );
 

@@ -118,11 +118,6 @@ const Home = () => {
             className="relative z-10 max-w-4xl"
             style={{ animation: "fadeInUp 1.1s ease-out" }}
           >
-            {/* Top Badge */}
-            <div className="inline-flex items-center gap-2 mb-6 px-5 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-emerald-600 text-sm">
-              ✨ AI-Powered Sustainability
-            </div>
-
             {/* Main Heading */}
             <h1 className="text-5xl md:text-6xl font-extrabold leading-tight mb-6">
               Track Your Impact. <br />

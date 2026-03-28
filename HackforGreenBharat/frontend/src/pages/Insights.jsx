@@ -1,20 +1,17 @@
 import Navbar from "@/components/Navbar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
+import { useState } from "react";
 import {
   BarChart3,
-  TrendingUp,
   TrendingDown,
+  TrendingUp,
   AlertTriangle,
   Bell,
-  Clock,
   MapPin,
-  Trophy,
   Download,
   Share2,
+  Leaf,
+  Wind,
+  Activity,
 } from "lucide-react";
 
 const monthlyReport = {
@@ -22,24 +19,14 @@ const monthlyReport = {
   totalCO2: 156,
   previousMonth: 189,
   improvement: 17.5,
-  aqiExposure: {
-    good: 45,
-    moderate: 32,
-    unhealthy: 18,
-    hazardous: 5,
-  },
+  aqiExposure: { good: 45, moderate: 32, unhealthy: 18, hazardous: 5 },
   categories: [
     { name: "Transport", current: 45, previous: 62, change: -27 },
     { name: "Energy", current: 38, previous: 42, change: -9 },
     { name: "Shopping", current: 52, previous: 58, change: -10 },
     { name: "Lifestyle", current: 21, previous: 27, change: -22 },
   ],
-  toxinsInhaled: {
-    pm25: 234,
-    pm10: 456,
-    no2: 89,
-    co: 12,
-  },
+  toxinsInhaled: { pm25: 234, pm10: 456, no2: 89, co: 12 },
 };
 
 const predictiveAlerts = [
@@ -47,7 +34,7 @@ const predictiveAlerts = [
     id: 1,
     type: "warning",
     title: "High AQI Predicted Tomorrow",
-    description: "AQI expected to reach 280+ between 8-10 AM in Central Delhi",
+    description: "AQI expected to reach 280+ between 8–10 AM in Central Delhi",
     recommendation: "Consider leaving 30 mins early or working from home",
     time: "Tomorrow, 8:00 AM",
   },
@@ -55,7 +42,7 @@ const predictiveAlerts = [
     id: 2,
     type: "info",
     title: "Best Travel Window",
-    description: "AQI will be lowest between 2-4 PM today",
+    description: "AQI will be lowest between 2–4 PM today",
     recommendation: "Ideal time for outdoor activities or commute",
     time: "Today, 2:00 PM",
   },
@@ -64,7 +51,7 @@ const predictiveAlerts = [
     type: "alert",
     title: "Entering High Pollution Zone",
     description: "Anand Vihar area has AQI 350+ currently",
-    recommendation: "Take Ring Road alternate route (-45 min exposure)",
+    recommendation: "Take Ring Road alternate route (−45 min exposure)",
     time: "Real-time",
   },
 ];
@@ -78,160 +65,298 @@ const routeHeatmapData = [
   { area: "Gurgaon Cyber City", aqi: 175, trend: "down" },
 ];
 
-const getAQIColor = (aqi) => {
-  if (aqi <= 50) return "#22C55E";
-  if (aqi <= 100) return "#FACC15";
-  if (aqi <= 150) return "#FB923C";
-  if (aqi <= 200) return "#EF4444";
-  if (aqi <= 300) return "#A855F7";
-  return "#881337";
+const getAQILabel = (aqi) => {
+  if (aqi <= 50) return { label: "Good", color: "#16a34a", bg: "#dcfce7" };
+  if (aqi <= 100) return { label: "Moderate", color: "#ca8a04", bg: "#fef9c3" };
+  if (aqi <= 150) return { label: "Unhealthy (Sensitive)", color: "#ea580c", bg: "#ffedd5" };
+  if (aqi <= 200) return { label: "Unhealthy", color: "#dc2626", bg: "#fee2e2" };
+  if (aqi <= 300) return { label: "Very Unhealthy", color: "#9333ea", bg: "#f3e8ff" };
+  return { label: "Hazardous", color: "#7f1d1d", bg: "#fce7f3" };
 };
 
+const TABS = ["Monthly Report", "Smart Alerts", "Route Heatmap"];
+
 const Insights = () => {
+  const [activeTab, setActiveTab] = useState(0);
+
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(to bottom, #030a06, #071a0f, #0a2915)" }} className="mt-16">
+    <div style={{ minHeight: "100vh", background: "#f0faf5", fontFamily: "'Inter', sans-serif" }} className="mt-16">
       <Navbar />
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 16px" }}>
-        {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px", flexWrap: "wrap", gap: "16px" }}>
+
+      <div style={{ maxWidth: "960px", margin: "0 auto", padding: "40px 20px" }}>
+
+        {/* ── Page Header ── */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <h1 style={{ fontSize: "32px", fontWeight: "bold", color: "#f0f5f2", display: "flex", alignItems: "center", gap: "12px" }}>
-              <BarChart3 style={{ color: "#4ade80" }} />
+            <p style={{ fontSize: "13px", fontWeight: "600", color: "#10b981", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "6px" }}>
+              Environmental Insights
+            </p>
+            <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#111827", margin: 0 }}>
               Insights & Reports
             </h1>
-            <p style={{ color: "rgba(156, 163, 175, 0.8)", marginTop: "8px" }}>
-              Track your environmental impact over time
+            <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "4px" }}>
+              Your environmental impact for {monthlyReport.month}
             </p>
           </div>
-          <div style={{ display: "flex", gap: "12px" }}>
-            <Button style={{ background: "rgba(34, 197, 94, 0.2)", border: "1px solid rgba(34, 197, 94, 0.3)", color: "#4ade80" }}>
-              <Download size={16} style={{ marginRight: "8px" }} />
-              Export PDF
-            </Button>
-            <Button style={{ background: "rgba(34, 197, 94, 0.2)", border: "1px solid rgba(34, 197, 94, 0.3)", color: "#4ade80" }}>
-              <Share2 size={16} style={{ marginRight: "8px" }} />
-              Share
-            </Button>
+
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button style={{
+              display: "flex", alignItems: "center", gap: "6px",
+              padding: "9px 16px", borderRadius: "8px",
+              background: "#10b981", color: "white",
+              border: "none", fontSize: "13px", fontWeight: "600", cursor: "pointer"
+            }}>
+              <Download size={14} /> Export PDF
+            </button>
+            <button style={{
+              display: "flex", alignItems: "center", gap: "6px",
+              padding: "9px 16px", borderRadius: "8px",
+              background: "white", color: "#374151",
+              border: "1px solid #e5e7eb", fontSize: "13px", fontWeight: "500", cursor: "pointer"
+            }}>
+              <Share2 size={14} /> Share
+            </button>
           </div>
         </div>
 
-        {/* Tabs */}
-        <Tabs defaultValue="monthly" style={{ width: "100%" }}>
-          <TabsList style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)", marginBottom: "24px" }}>
-            <TabsTrigger value="monthly" style={{ color: "#9ca3af" }}>Monthly Report</TabsTrigger>
-            <TabsTrigger value="alerts" style={{ color: "#9ca3af" }}>Smart Alerts</TabsTrigger>
-            <TabsTrigger value="heatmap" style={{ color: "#9ca3af" }}>Route Heatmap</TabsTrigger>
-          </TabsList>
+        {/* ── Tab Bar ── */}
+        <div style={{
+          display: "inline-flex", background: "white",
+          border: "1px solid #e5e7eb", borderRadius: "10px",
+          padding: "4px", marginBottom: "28px", gap: "2px"
+        }}>
+          {TABS.map((tab, i) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(i)}
+              style={{
+                padding: "8px 18px", borderRadius: "7px",
+                border: "none", cursor: "pointer", fontSize: "13px", fontWeight: "500",
+                background: activeTab === i ? "#10b981" : "transparent",
+                color: activeTab === i ? "white" : "#6b7280",
+                transition: "all 0.15s ease"
+              }}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
 
-          {/* Monthly Report */}
-          <TabsContent value="monthly">
-            {/* Stats Grid */}
+        {/* ══════════════════════════════════════ */}
+        {/* TAB 0 — Monthly Report                */}
+        {/* ══════════════════════════════════════ */}
+        {activeTab === 0 && (
+          <div>
+            {/* Stat Cards */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-              <Card style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-                <CardContent style={{ padding: "24px", textAlign: "center" }}>
-                  <p style={{ fontSize: "36px", fontWeight: "bold", color: "#4ade80" }}>{monthlyReport.totalCO2}kg</p>
-                  <p style={{ color: "#9ca3af", fontSize: "14px" }}>Total CO₂ This Month</p>
-                  <p style={{ color: "#22c55e", fontSize: "12px", marginTop: "8px", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
-                    <TrendingDown size={14} />
-                    {monthlyReport.improvement}% vs last month
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-                <CardContent style={{ padding: "24px", textAlign: "center" }}>
-                  <p style={{ fontSize: "36px", fontWeight: "bold", color: "#4ade80" }}>{monthlyReport.aqiExposure.good}%</p>
-                  <p style={{ color: "#9ca3af", fontSize: "14px" }}>Time in Good AQI</p>
-                </CardContent>
-              </Card>
-
-              <Card style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-                <CardContent style={{ padding: "24px", textAlign: "center" }}>
-                  <p style={{ fontSize: "36px", fontWeight: "bold", color: "#FB923C" }}>{monthlyReport.toxinsInhaled.pm25}μg</p>
-                  <p style={{ color: "#9ca3af", fontSize: "14px" }}>PM2.5 Inhaled</p>
-                </CardContent>
-              </Card>
-
-              <Card style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-                <CardContent style={{ padding: "24px", textAlign: "center" }}>
-                  <p style={{ fontSize: "36px", fontWeight: "bold", color: "#4ade80" }}>27</p>
-                  <p style={{ color: "#9ca3af", fontSize: "14px" }}>Eco Activities Done</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Categories */}
-            <Card style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-              <CardHeader>
-                <CardTitle style={{ color: "#f0f5f2" }}>CO₂ by Category</CardTitle>
-              </CardHeader>
-              <CardContent style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                {monthlyReport.categories.map((cat) => (
-                  <div key={cat.name}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span style={{ color: "#f0f5f2" }}>{cat.name}</span>
-                      <span style={{ color: cat.change < 0 ? "#22c55e" : "#ef4444", display: "flex", alignItems: "center", gap: "4px" }}>
-                        {cat.change < 0 ? <TrendingDown size={14} /> : <TrendingUp size={14} />}
-                        {cat.change}%
-                      </span>
-                    </div>
-                    <div style={{ height: "8px", background: "rgba(34, 197, 94, 0.2)", borderRadius: "4px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${cat.current}%`, background: "#4ade80", borderRadius: "4px" }} />
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Alerts */}
-          <TabsContent value="alerts">
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              {predictiveAlerts.map((alert) => (
-                <Card key={alert.id} style={{ 
-                  background: "rgba(34, 197, 94, 0.1)", 
-                  border: `1px solid ${alert.type === "warning" ? "rgba(251, 146, 60, 0.3)" : alert.type === "alert" ? "rgba(239, 68, 68, 0.3)" : "rgba(34, 197, 94, 0.3)"}` 
+              {[
+                {
+                  icon: <Leaf size={18} color="#10b981" />,
+                  value: `${monthlyReport.totalCO2} kg`,
+                  label: "Total CO₂ This Month",
+                  sub: `↓ ${monthlyReport.improvement}% vs last month`,
+                  subColor: "#10b981",
+                },
+                {
+                  icon: <Wind size={18} color="#10b981" />,
+                  value: `${monthlyReport.aqiExposure.good}%`,
+                  label: "Time in Good AQI",
+                  sub: "of total exposure time",
+                  subColor: "#9ca3af",
+                },
+                {
+                  icon: <Activity size={18} color="#f97316" />,
+                  value: `${monthlyReport.toxinsInhaled.pm25} μg`,
+                  label: "PM2.5 Inhaled",
+                  sub: "monthly average",
+                  subColor: "#9ca3af",
+                },
+                {
+                  icon: <BarChart3 size={18} color="#10b981" />,
+                  value: "27",
+                  label: "Eco Activities Done",
+                  sub: "+6 from last month",
+                  subColor: "#10b981",
+                },
+              ].map((s, i) => (
+                <div key={i} style={{
+                  background: "white", border: "1px solid #e5e7eb",
+                  borderRadius: "12px", padding: "20px"
                 }}>
-                  <CardContent style={{ padding: "20px", display: "flex", gap: "16px", alignItems: "flex-start" }}>
-                    <AlertTriangle style={{ color: alert.type === "warning" ? "#FB923C" : alert.type === "alert" ? "#EF4444" : "#4ade80" }} />
-                    <div style={{ flex: 1 }}>
-                      <h3 style={{ color: "#f0f5f2", fontWeight: "600", marginBottom: "4px" }}>{alert.title}</h3>
-                      <p style={{ color: "#9ca3af", fontSize: "14px", marginBottom: "8px" }}>{alert.description}</p>
-                      <p style={{ color: "#4ade80", fontSize: "14px" }}>💡 {alert.recommendation}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                    {s.icon}
+                    <span style={{ fontSize: "12px", color: "#9ca3af", fontWeight: "500" }}>{s.label}</span>
+                  </div>
+                  <p style={{ fontSize: "28px", fontWeight: "700", color: "#111827", margin: "0 0 4px" }}>{s.value}</p>
+                  <p style={{ fontSize: "12px", color: s.subColor, margin: 0 }}>{s.sub}</p>
+                </div>
               ))}
             </div>
-          </TabsContent>
 
-          {/* Heatmap */}
-          <TabsContent value="heatmap">
-            <Card style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-              <CardHeader>
-                <CardTitle style={{ color: "#f0f5f2" }}>Area-wise AQI Status</CardTitle>
-              </CardHeader>
-              <CardContent style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                {routeHeatmapData.map((area) => (
-                  <div key={area.area} style={{ 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "space-between",
-                    padding: "12px 16px",
-                    background: "rgba(0, 0, 0, 0.2)",
-                    borderRadius: "8px"
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                      <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: getAQIColor(area.aqi) }} />
-                      <span style={{ color: "#f0f5f2" }}>{area.area}</span>
+            {/* CO₂ by Category */}
+            <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "24px" }}>
+              <h2 style={{ fontSize: "15px", fontWeight: "600", color: "#111827", margin: "0 0 20px" }}>CO₂ by Category</h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                {monthlyReport.categories.map((cat) => (
+                  <div key={cat.name}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                      <span style={{ fontSize: "14px", color: "#374151", fontWeight: "500" }}>{cat.name}</span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                        <span style={{ fontSize: "12px", color: "#9ca3af" }}>{cat.current} kg</span>
+                        <span style={{
+                          display: "flex", alignItems: "center", gap: "3px",
+                          fontSize: "13px", fontWeight: "600",
+                          color: cat.change < 0 ? "#16a34a" : "#dc2626"
+                        }}>
+                          {cat.change < 0 ? <TrendingDown size={13} /> : <TrendingUp size={13} />}
+                          {Math.abs(cat.change)}%
+                        </span>
+                      </div>
                     </div>
-                    <span style={{ color: getAQIColor(area.aqi), fontWeight: "600" }}>{area.aqi}</span>
+                    <div style={{ height: "6px", background: "#f3f4f6", borderRadius: "99px", overflow: "hidden" }}>
+                      <div style={{
+                        height: "100%", width: `${cat.current}%`,
+                        background: "#10b981", borderRadius: "99px",
+                        transition: "width 0.4s ease"
+                      }} />
+                    </div>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              </div>
+            </div>
+
+            {/* AQI Exposure Breakdown */}
+            <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", padding: "24px", marginTop: "16px" }}>
+              <h2 style={{ fontSize: "15px", fontWeight: "600", color: "#111827", margin: "0 0 16px" }}>AQI Exposure Breakdown</h2>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
+                {[
+                  { label: "Good", value: monthlyReport.aqiExposure.good, color: "#16a34a", bg: "#dcfce7" },
+                  { label: "Moderate", value: monthlyReport.aqiExposure.moderate, color: "#ca8a04", bg: "#fef9c3" },
+                  { label: "Unhealthy", value: monthlyReport.aqiExposure.unhealthy, color: "#dc2626", bg: "#fee2e2" },
+                  { label: "Hazardous", value: monthlyReport.aqiExposure.hazardous, color: "#9333ea", bg: "#f3e8ff" },
+                ].map((item) => (
+                  <div key={item.label} style={{
+                    background: item.bg, borderRadius: "10px",
+                    padding: "14px", textAlign: "center"
+                  }}>
+                    <p style={{ fontSize: "22px", fontWeight: "700", color: item.color, margin: "0 0 4px" }}>{item.value}%</p>
+                    <p style={{ fontSize: "12px", color: item.color, margin: 0, fontWeight: "500" }}>{item.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════ */}
+        {/* TAB 1 — Smart Alerts                  */}
+        {/* ══════════════════════════════════════ */}
+        {activeTab === 1 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {predictiveAlerts.map((alert) => {
+              const isWarning = alert.type === "warning";
+              const isAlert = alert.type === "alert";
+              const borderColor = isAlert ? "#fecaca" : isWarning ? "#fed7aa" : "#bbf7d0";
+              const iconColor = isAlert ? "#dc2626" : isWarning ? "#f97316" : "#16a34a";
+              const tagBg = isAlert ? "#fee2e2" : isWarning ? "#ffedd5" : "#dcfce7";
+              const tagColor = isAlert ? "#dc2626" : isWarning ? "#ea580c" : "#16a34a";
+              const tagLabel = isAlert ? "Real-time" : isWarning ? "Warning" : "Info";
+
+              return (
+                <div key={alert.id} style={{
+                  background: "white", border: `1px solid ${borderColor}`,
+                  borderRadius: "12px", padding: "20px",
+                  display: "flex", gap: "16px", alignItems: "flex-start"
+                }}>
+                  <div style={{
+                    width: "36px", height: "36px", borderRadius: "8px",
+                    background: tagBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+                  }}>
+                    <AlertTriangle size={16} color={iconColor} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                      <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#111827", margin: 0 }}>{alert.title}</h3>
+                      <span style={{
+                        fontSize: "11px", fontWeight: "600", padding: "2px 8px",
+                        borderRadius: "99px", background: tagBg, color: tagColor
+                      }}>{tagLabel}</span>
+                    </div>
+                    <p style={{ fontSize: "13px", color: "#6b7280", margin: "4px 0 8px" }}>{alert.description}</p>
+                    <p style={{ fontSize: "13px", color: "#059669", margin: 0, fontWeight: "500" }}>
+                      💡 {alert.recommendation}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════ */}
+        {/* TAB 2 — Route Heatmap                 */}
+        {/* ══════════════════════════════════════ */}
+        {activeTab === 2 && (
+          <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", overflow: "hidden" }}>
+            <div style={{ padding: "20px 24px", borderBottom: "1px solid #f3f4f6" }}>
+              <h2 style={{ fontSize: "15px", fontWeight: "600", color: "#111827", margin: 0 }}>Area-wise AQI Status</h2>
+              <p style={{ fontSize: "13px", color: "#9ca3af", margin: "4px 0 0" }}>Live pollution levels across Delhi NCR</p>
+            </div>
+
+            {/* Legend */}
+            <div style={{ padding: "12px 24px", borderBottom: "1px solid #f3f4f6", display: "flex", gap: "16px", flexWrap: "wrap" }}>
+              {[
+                { label: "Good (0–50)", color: "#16a34a" },
+                { label: "Moderate (51–100)", color: "#ca8a04" },
+                { label: "Unhealthy (101–200)", color: "#dc2626" },
+                { label: "Very Unhealthy (201–300)", color: "#9333ea" },
+              ].map(({ label, color }) => (
+                <div key={label} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: color }} />
+                  <span style={{ fontSize: "11px", color: "#9ca3af" }}>{label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Table Header */}
+            <div style={{
+              display: "grid", gridTemplateColumns: "1fr auto auto",
+              padding: "10px 24px", background: "#f9fafb",
+              borderBottom: "1px solid #f3f4f6"
+            }}>
+              <span style={{ fontSize: "11px", fontWeight: "600", color: "#9ca3af", textTransform: "uppercase" }}>Area</span>
+              <span style={{ fontSize: "11px", fontWeight: "600", color: "#9ca3af", textTransform: "uppercase", minWidth: "80px", textAlign: "center" }}>AQI</span>
+              <span style={{ fontSize: "11px", fontWeight: "600", color: "#9ca3af", textTransform: "uppercase", minWidth: "80px", textAlign: "right" }}>Status</span>
+            </div>
+
+            {routeHeatmapData.map((area, i) => {
+              const { label, color, bg } = getAQILabel(area.aqi);
+              return (
+                <div key={area.area} style={{
+                  display: "grid", gridTemplateColumns: "1fr auto auto",
+                  alignItems: "center", padding: "14px 24px",
+                  borderBottom: i < routeHeatmapData.length - 1 ? "1px solid #f3f4f6" : "none"
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <MapPin size={14} color="#9ca3af" />
+                    <span style={{ fontSize: "14px", color: "#374151", fontWeight: "500" }}>{area.area}</span>
+                  </div>
+                  <span style={{ fontSize: "16px", fontWeight: "700", color, minWidth: "80px", textAlign: "center" }}>
+                    {area.aqi}
+                  </span>
+                  <span style={{
+                    fontSize: "11px", fontWeight: "600", padding: "3px 10px",
+                    borderRadius: "99px", background: bg, color,
+                    minWidth: "80px", textAlign: "center"
+                  }}>
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
       </div>
     </div>
   );
