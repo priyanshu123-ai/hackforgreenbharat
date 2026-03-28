@@ -22,8 +22,12 @@ import {
   Recycle,
   Utensils,
   Home,
+  Sparkles,
+  Leaf,
+  ArrowRight
 } from "lucide-react";
 import { serverUrl } from "@/main";
+import Footer from "./Footer";
 
 const questions = [
   {
@@ -35,7 +39,7 @@ const questions = [
     min: 0,
     max: 1000,
     unit: "kWh",
-    hint: "Check your electricity bill",
+    hint: "Roughly estimating from your recent billing history.",
   },
   {
     id: "transport",
@@ -44,11 +48,11 @@ const questions = [
     question: "What's your primary mode of transportation?",
     type: "radio",
     options: [
-      { value: "public", label: "Public Transport" },
-      { value: "carpool", label: "Carpool / Shared Rides" },
-      { value: "personal", label: "Personal Vehicle" },
-      { value: "bike", label: "Bicycle / Walking" },
-      { value: "electric", label: "Electric Vehicle" },
+      { value: "public", label: "Public Transport (Metro/Bus)" },
+      { value: "carpool", label: "Carpool / Shared Journeys" },
+      { value: "personal", label: "Personal Vehicle (Fuel)" },
+      { value: "bike", label: "Active Travel (Bicycle/Walking)" },
+      { value: "electric", label: "Electric Vehicle (Clean Energy)" },
     ],
   },
   {
@@ -63,54 +67,54 @@ const questions = [
   },
   {
     id: "shopping",
-    category: "Shopping",
+    category: "Consumption",
     icon: <ShoppingBag className="w-6 h-6" />,
-    question: "How often do you buy new clothes?",
+    question: "How would you describe your shopping habits?",
     type: "radio",
     options: [
-      { value: "rarely", label: "Rarely" },
-      { value: "monthly", label: "Monthly" },
-      { value: "weekly", label: "Weekly" },
-      { value: "secondhand", label: "Mostly second-hand" },
+      { value: "rarely", label: "Minimalist (Only essentials)" },
+      { value: "monthly", label: "Conscious (Regular needs)" },
+      { value: "weekly", label: "Frequent (Fashion & Trends)" },
+      { value: "secondhand", label: "Sustainable (Pre-loved only)" },
     ],
   },
   {
     id: "diet",
     category: "Lifestyle",
     icon: <Utensils className="w-6 h-6" />,
-    question: "How would you describe your diet?",
+    question: "How would you describe your dietary choices?",
     type: "radio",
     options: [
-      { value: "vegan", label: "Vegan" },
+      { value: "vegan", label: "Plant-Based (Vegan)" },
       { value: "vegetarian", label: "Vegetarian" },
-      { value: "flexitarian", label: "Flexitarian" },
-      { value: "omnivore", label: "Regular meat eater" },
+      { value: "flexitarian", label: "Flexitarian (Low Meat)" },
+      { value: "omnivore", label: "Balanced (Regular Meat)" },
     ],
   },
   {
     id: "recycling",
-    category: "Lifestyle",
+    category: "Environment",
     icon: <Recycle className="w-6 h-6" />,
-    question: "Do you separate and recycle your waste?",
+    question: "Do you actively participate in waste segregation?",
     type: "radio",
     options: [
-      { value: "always", label: "Always" },
-      { value: "mostly", label: "Mostly" },
-      { value: "sometimes", label: "Sometimes" },
-      { value: "never", label: "Never" },
+      { value: "always", label: "Strictly (100% sorting)" },
+      { value: "mostly", label: "Often (Major items)" },
+      { value: "sometimes", label: "Occasionally" },
+      { value: "never", label: "Not active yet" },
     ],
   },
   {
     id: "home",
-    category: "Home",
+    category: "Home Efficiency",
     icon: <Home className="w-6 h-6" />,
-    question: "Do you use energy-efficient appliances?",
+    question: "Does your residence use smart or energy-efficient tech?",
     type: "radio",
     options: [
-      { value: "all", label: "Yes, all" },
-      { value: "most", label: "Most" },
-      { value: "some", label: "Some" },
-      { value: "none", label: "Not really" },
+      { value: "all", label: "Fully Optimized (Smart Hub)" },
+      { value: "most", label: "High Efficiency (Energy Star)" },
+      { value: "some", label: "Partial (A few appliances)" },
+      { value: "none", label: "Traditional setup" },
     ],
   },
 ];
@@ -154,14 +158,10 @@ const Questionnaire = () => {
       });
 
       const data = await res.json();
-
-      toast.success(`Eco Score Ready 🌱  Score: ${data.assessment.score}`);
-
-      navigate("/dashboard", {
-        state: data.assessment,
-      });
+      toast.success(`Analysis Complete! Score: ${data.assessment.score}`);
+      navigate("/dashboard", { state: data.assessment });
     } catch (err) {
-      toast.error("Failed to calculate eco score");
+      toast.error("Had trouble processing the score.");
     } finally {
       setIsCalculating(false);
     }
@@ -170,134 +170,155 @@ const Questionnaire = () => {
   const canProceed = answers[currentQuestion.id] !== undefined;
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#0c1210_0%,#060908_100%)]">
+    <div className="min-h-screen bg-[#f0faf5] pb-24">
       <Navbar />
 
-      <main className="pt-24 pb-12">
-        <div className="container mx-auto px-4 max-w-2xl">
-
-          {/* Progress */}
-          <div className="mb-8">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-400">
-                {currentStep + 1} / {total} Questions
-              </span>
-              <span className="text-green-400 font-semibold">
+      <main className="pt-32 pb-12">
+        <div className="container mx-auto px-6 max-w-2xl relative">
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-100 blur-[60px] rounded-full -z-10 animate-pulse"></div>
+            
+          {/* Progress Section */}
+          <div className="mb-12">
+            <div className="flex justify-between items-end mb-4">
+              <div>
+                <h2 className="text-3xl font-black text-gray-900 tracking-tight leading-none uppercase">Analysis <span className="text-emerald-500">Progress</span></h2>
+                <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-2">{currentStep + 1} of {total} Milestones</p>
+              </div>
+              <span className="text-4xl font-black text-emerald-500 tracking-tighter">
                 {Math.round(progress)}%
               </span>
             </div>
 
-            <div className="w-full h-2 rounded-full bg-[#111] overflow-hidden">
+            <div className="w-full h-4 rounded-2xl bg-white border border-emerald-100 p-1 overflow-hidden">
               <div
-                className="h-full transition-all duration-500 bg-green-500"
+                className="h-full transition-all duration-700 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-100"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
 
-          {/* Card */}
-          <Card className="bg-black/40 border border-white/10">
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-green-400">
+          {/* Question Card */}
+          <Card className="bg-white border-none rounded-[3rem] shadow-2xl shadow-emerald-900/5 overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                <Sparkles size={120} className="text-emerald-500" />
+            </div>
+            <CardHeader className="p-10 pb-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500 border border-emerald-100 shadow-sm">
                   {currentQuestion.icon}
                 </div>
-                <span className="text-sm text-gray-400 uppercase">
+                <span className="text-xs font-black text-emerald-600 uppercase tracking-[0.2em] bg-emerald-50 px-3 py-1 rounded-lg">
                   {currentQuestion.category}
                 </span>
               </div>
 
-              <CardTitle className="text-white text-2xl">
+              <CardTitle className="text-gray-900 text-3xl font-black leading-tight tracking-tight uppercase">
                 {currentQuestion.question}
               </CardTitle>
 
               {currentQuestion.hint && (
-                <CardDescription className="text-gray-400">
-                  {currentQuestion.hint}
+                <CardDescription className="text-gray-500 font-medium text-base italic mt-2">
+                  "{currentQuestion.hint}"
                 </CardDescription>
               )}
             </CardHeader>
 
-            <CardContent className="space-y-6">
-
-              {/* SLIDER */}
+            <CardContent className="p-10 pt-0 space-y-10">
+              {/* SLIDER COMPONENT */}
               {currentQuestion.type === "slider" && (
-                <div className="space-y-6">
-                  <Slider
-                    className="eco-slider"
-                    value={[
-                      Number(answers[currentQuestion.id]) ??
-                        currentQuestion.min,
-                    ]}
-                    min={currentQuestion.min}
-                    max={currentQuestion.max}
-                    step={1}
-                    onValueChange={(val) => handleAnswer(val[0])}
-                  />
+                <div className="space-y-12 py-6">
+                  <div className="relative">
+                    <Slider
+                        className="eco-slider h-4"
+                        value={[Number(answers[currentQuestion.id]) ?? currentQuestion.min]}
+                        min={currentQuestion.min}
+                        max={currentQuestion.max}
+                        step={1}
+                        onValueChange={(val) => handleAnswer(val[0])}
+                    />
+                  </div>
 
-                  <div className="text-center text-white text-4xl font-bold">
-                    {answers[currentQuestion.id] ??
-                      currentQuestion.min}
-                    <span className="text-gray-400 text-lg ml-2">
-                      {currentQuestion.unit}
-                    </span>
+                  <div className="flex items-center justify-center p-10 bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-100 relative group">
+                    <div className="text-center">
+                        <span className="text-7xl font-black text-emerald-500 tracking-tighter group-hover:scale-110 transition-transform block">
+                        {answers[currentQuestion.id] ?? currentQuestion.min}
+                        </span>
+                        <span className="text-gray-400 font-black text-xl uppercase tracking-widest mt-2 block">
+                        {currentQuestion.unit}
+                        </span>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* RADIO */}
+              {/* RADIO GROUP COMPONENT */}
               {currentQuestion.type === "radio" && (
                 <RadioGroup
                   value={String(answers[currentQuestion.id] || "")}
                   onValueChange={handleAnswer}
-                  className="space-y-3"
+                  className="space-y-4"
                 >
                   {currentQuestion.options.map((option) => (
                     <Label
                       key={option.value}
-                      className={`flex items-center space-x-3 p-4 rounded-xl border cursor-pointer transition-all ${
+                      className={`flex items-center space-x-4 p-6 rounded-[1.8rem] border-2 cursor-pointer transition-all duration-300 relative overflow-hidden group ${
                         answers[currentQuestion.id] === option.value
-                          ? "border-green-400 bg-green-400/10"
-                          : "border-white/10 hover:border-green-400/50"
+                          ? "border-emerald-500 bg-white shadow-xl shadow-emerald-900/10"
+                          : "border-gray-50 bg-gray-50/50 hover:border-emerald-200 hover:bg-white"
                       }`}
                     >
-                      <RadioGroupItem value={option.value} />
-                      <span className="text-white">
+                      <RadioGroupItem value={option.value} className="w-6 h-6 border-2 border-emerald-200 text-emerald-500" />
+                      <span className={`text-lg font-bold tracking-tight uppercase ${answers[currentQuestion.id] === option.value ? 'text-emerald-700' : 'text-gray-600'}`}>
                         {option.label}
                       </span>
+                      {answers[currentQuestion.id] === option.value && (
+                          <div className="absolute right-6"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div></div>
+                      )}
                     </Label>
                   ))}
                 </RadioGroup>
               )}
 
-              {/* NAV */}
-              <div className="flex gap-4 pt-6">
+              {/* NAVIGATION BUTTONS */}
+              <div className="flex gap-6 pt-10 border-t border-gray-50">
                 <Button
                   variant="outline"
                   onClick={handlePrev}
                   disabled={currentStep === 0}
-                  className="flex-1"
+                  className="h-16 flex-1 rounded-2xl border-none bg-gray-50 text-gray-400 font-black text-base hover:bg-gray-100 transition-all uppercase tracking-widest"
                 >
-                  <ChevronLeft className="w-4 h-4" /> Previous
+                  <ChevronLeft className="w-5 h-5 mr-2" /> Previous
                 </Button>
 
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed || isCalculating}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="h-16 flex-[1.5] bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-100 transition-all active:scale-95 uppercase tracking-widest"
                 >
-                  {isCalculating
-                    ? "Calculating..."
-                    : currentStep === total - 1
-                    ? "Calculate Score"
-                    : "Next"}
-                  <ChevronRight className="w-4 h-4 ml-2" />
+                  {isCalculating ? (
+                      <div className="flex items-center gap-3">
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          ALGORITHMS RUNNING...
+                      </div>
+                  ) : currentStep === total - 1 ? (
+                    <div className="flex items-center gap-3">
+                        GENERATE REPORT <ArrowRight className="w-6 h-6" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                        NEXT <ChevronRight className="w-6 h-6" />
+                    </div>
+                  )}
                 </Button>
               </div>
             </CardContent>
           </Card>
+          
+          <p className="text-center mt-12 text-gray-400 font-bold text-[10px] uppercase tracking-[0.3em]">Environmental Intelligence Unit • EcoSense V4.0</p>
         </div>
       </main>
+      
+      <Footer />
     </div>
   );
 };

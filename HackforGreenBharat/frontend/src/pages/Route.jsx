@@ -14,44 +14,40 @@ import {
   Route as RouteIcon,
   AlertTriangle,
   Loader2,
+  Sparkles,
+  Zap,
+  Leaf
 } from "lucide-react";
 import { serverUrl } from "@/main";
 import { getCachedRoute, setCachedRoute } from "@/utils/routeCache";
 import { toast } from "react-toastify";
+import Footer from "@/pages/Footer";
 
 /* AQI color helper */
 const getAQIColor = (aqi) => {
   if (aqi === null) return "#9CA3AF";
-  if (aqi <= 50) return "#22C55E";
-  if (aqi <= 100) return "#FACC15";
-  if (aqi <= 150) return "#FB923C";
-  if (aqi <= 200) return "#EF4444";
-  return "#991B1B";
+  if (aqi <= 50) return "#10B981"; // Emerald
+  if (aqi <= 100) return "#FACC15"; // Yellow
+  if (aqi <= 150) return "#FB923C"; // Orange
+  if (aqi <= 200) return "#EF4444"; // Red
+  return "#7F1D1D"; // Dark Red
 };
 
 const unlockSpeech = () => {
   if (!("speechSynthesis" in window)) return;
-
-  const msg = new SpeechSynthesisUtterance("Audio enabled");
-  msg.volume = 1; // MUST be audible once
-  msg.rate = 1;
-  msg.lang = "en-IN";
-
+  const msg = new SpeechSynthesisUtterance("");
+  msg.volume = 0;
   window.speechSynthesis.speak(msg);
 };
-
 
 const speak = (text) => {
   if (!("speechSynthesis" in window)) return;
-
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = "en-IN";
-  msg.rate = 0.95;
+  msg.rate = 1;
   msg.volume = 1;
-
   window.speechSynthesis.speak(msg);
 };
-
 
 const Routes = () => {
   const [origin, setOrigin] = useState("Delhi");
@@ -65,149 +61,117 @@ const Routes = () => {
   const lastAlertRef = useRef(null);
   const voiceEnabledRef = useRef(true);
 
-  /* 🔊 POLLUTION ALERT (VOICE + TOAST) */
-
-
   useEffect(() => {
     if (!routes.length) return;
-
     const segments = routes[selectedRoute]?.pollutionSegments;
     if (!segments?.length) return;
-
     const high = segments.find((s) => s.aqi >= 150);
     if (!high) return;
-
     const level = high.aqi >= 200 ? "SEVERE" : "HIGH";
     if (lastAlertRef.current === level) return;
-
     lastAlertRef.current = level;
-
-    const message =
-      level === "SEVERE"
-        ? "Severe pollution ahead. Close windows and enable air recirculation."
-        : "High pollution detected ahead. Please wear a mask.";
-
-    toast.warn(message, { position: "top-center", autoClose: 8000 });
-
-    if (voiceEnabledRef.current) {
-      speak(message);
-    }
+    const message = level === "SEVERE" ? "Severe pollution ahead. Close windows." : "High pollution detected ahead. Wear a mask.";
+    toast.warn(message, { position: "top-center", autoClose: 5000 });
+    if (voiceEnabledRef.current) speak(message);
   }, [routes, selectedRoute]);
 
   const handleSearch = async () => {
-     unlockSpeech(); 
-  if (window.speechSynthesis) {
-  const unlock = new SpeechSynthesisUtterance("Starting route");
-  unlock.volume = 0;
-  window.speechSynthesis.speak(unlock);
-}
-
-
-    lastAlertRef.current = null; // reset alerts on new search
-
+    unlockSpeech();
     if (!destination) return;
+    setRoutes([]);
+    setSelectedRoute(0);
     setLoading(true);
-
     try {
       const cached = getCachedRoute(origin, destination);
       if (cached) {
         setRoutes(cached.routes || []);
-        setSelectedRoute(cached.routes?.[0]?.id || 0);
+        setSelectedRoute(0);
         setOriginCoords(cached.origin);
         setDestinationCoords(cached.destination);
+        setLoading(false);
         return;
       }
-
-      const res = await axios.post(`${serverUrl}/api/v2/routes`, {
-        originCity: origin,
-        destinationCity: destination,
-      });
-
-      setCachedRoute(origin, destination, res.data);
-      setRoutes(res.data.routes || []);
-      setSelectedRoute(res.data.routes?.[0]?.id || 0);
-      setOriginCoords(res.data.origin);
-      setDestinationCoords(res.data.destination);
+      const fastRes = await axios.post(`${serverUrl}/api/v2/routes?fast=true`, { originCity: origin, destinationCity: destination });
+      if (fastRes.data.success) {
+        setRoutes(fastRes.data.routes);
+        setOriginCoords(fastRes.data.origin);
+        setDestinationCoords(fastRes.data.destination);
+      }
+      const eliteRes = await axios.post(`${serverUrl}/api/v2/routes`, { originCity: origin, destinationCity: destination });
+      if (eliteRes.data.success) {
+        setCachedRoute(origin, destination, eliteRes.data);
+        setRoutes(eliteRes.data.routes || []);
+        setOriginCoords(eliteRes.data.origin);
+        setDestinationCoords(eliteRes.data.destination);
+      }
     } catch (err) {
-      console.error(err);
+      toast.error("Had trouble finding that path.");
     } finally {
       setLoading(false);
     }
   };
 
-  window.stopPollutionVoice = () => {
-    window.speechSynthesis.cancel();
-    voiceEnabledRef.current = false;
-  };
-
-
   return (
-    <div className="min-h-screen" style={{ background: "#0a0f0d" }}>
+    <div className="min-h-screen bg-[#f0faf5] pb-24">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-8 mt-16">
-        {/* Header - Humanized */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-            <span className="text-emerald-400">Your Journey,</span>{" "}
-            <span className="text-white">Your Air.</span>
+      <main className="container mx-auto px-6 pt-32 pb-12">
+        {/* HERO SECTION */}
+        <div className="text-center mb-16 relative overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-emerald-100/30 blur-[120px] rounded-full -z-10"></div>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+            <Sparkles className="w-4 h-4 text-emerald-600" />
+            <span className="text-sm font-semibold text-emerald-600 tracking-wide uppercase">AI Optimized Nav</span>
+          </div>
+          <h1 className="text-[clamp(1.5rem,5vw,3.5rem)] font-black text-gray-900 tracking-tight leading-none mb-6">
+            Smart Path, <span className="text-emerald-500">Pure Air.</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto italic">
-            "Every breath counts. Let's find the path that cares for you."
+          <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
+            Personalized routes that prioritize your respiratory health by avoiding high-AQI zones in real-time.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* LEFT */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Search */}
-            <Card className="border-0 bg-[rgba(15,25,23,0.9)]">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="relative flex-1">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400" />
-                    <Input
-                      value={origin}
-                      onChange={(e) => setOrigin(e.target.value)}
-                      placeholder="My starting point..."
-                      className="pl-10 h-12 bg-white/5 border-emerald-500/20 text-white rounded-xl focus:border-emerald-500"
-                    />
+        <div className="grid lg:grid-cols-12 gap-8 items-start">
+          {/* SEARCH & MAP COLUMN */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* Search Input Card */}
+            <Card className="border-none bg-white rounded-[2.5rem] shadow-xl shadow-emerald-900/5 p-6 md:p-10">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                     <MapPin className="text-emerald-500 w-4 h-4" />
                   </div>
-
-                  <div className="relative flex-1">
-                    <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400" />
-                    <Input
-                      value={destination}
-                      onChange={(e) => setDestination(e.target.value)}
-                      placeholder="Where should we go?"
-                      className="pl-10 h-12 bg-white/5 border-amber-500/20 text-white rounded-xl focus:border-amber-500"
-                    />
-                  </div>
-
-                  <Button
-                    onClick={handleSearch}
-                    disabled={loading}
-                    className="bg-emerald-500 hover:bg-emerald-600 px-8"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Finding…
-                      </>
-                    ) : (
-                      <>
-                        <Search className="w-4 h-4 mr-2" />
-                        Find Routes
-                      </>
-                    )}
-                  </Button>
+                  <Input
+                    value={origin}
+                    onChange={(e) => setOrigin(e.target.value)}
+                    placeholder="Starting point..."
+                    className="pl-16 h-16 bg-gray-50 border-gray-100 text-lg font-bold rounded-2xl focus:bg-white focus:border-emerald-400 transition-all shadow-inner"
+                  />
                 </div>
-              </CardContent>
+                <div className="flex-1 relative">
+                   <div className="absolute left-6 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center border border-red-100">
+                     <Navigation className="text-red-500 w-4 h-4" />
+                  </div>
+                  <Input
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                    placeholder="Enter destination..."
+                    className="pl-16 h-16 bg-gray-50 border-gray-100 text-lg font-bold rounded-2xl focus:bg-white focus:border-emerald-400 transition-all shadow-inner"
+                  />
+                </div>
+                <Button
+                  onClick={handleSearch}
+                  disabled={loading}
+                  className="h-16 px-10 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl shadow-lg shadow-emerald-200 text-lg active:scale-95 transition-all"
+                >
+                  {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Search className="w-6 h-6" />}
+                </Button>
+              </div>
             </Card>
 
-            {/* Map */}
-            <Card className="border-0 bg-[rgba(15,25,23,0.9)]">
-              <CardContent className="p-4">
+            {/* Map Viewer Card */}
+            <Card className="border-none bg-white rounded-[3rem] shadow-2xl shadow-emerald-900/10 overflow-hidden relative">
+              <CardContent className="p-4 h-[600px] relative">
                 {routes.length > 0 && originCoords && destinationCoords ? (
                   <RouteMap
                     routes={routes}
@@ -216,232 +180,161 @@ const Routes = () => {
                     destination={destinationCoords}
                   />
                 ) : (
-                  <div className="h-[450px] flex items-center justify-center border-2 border-dashed border-emerald-500/20">
-                    <RouteIcon className="w-16 h-16 text-emerald-500/30" />
+                  <div className="h-full flex flex-col items-center justify-center bg-gray-50/50">
+                    <div className="w-24 h-24 rounded-[2rem] bg-white border border-gray-100 rotate-12 flex items-center justify-center mb-6 shadow-sm">
+                        <RouteIcon className="w-10 h-10 text-emerald-300" />
+                    </div>
+                    <p className="text-gray-400 font-bold text-xl uppercase tracking-widest">Connect the dots</p>
+                    <p className="text-gray-400 text-sm mt-2 font-medium">Search for a destination to render the air quality map</p>
                   </div>
+                )}
+                {loading && (
+                    <div className="absolute inset-4 bg-white/60 backdrop-blur-sm z-50 rounded-[2.5rem] flex flex-col items-center justify-center">
+                        <div className="w-16 h-16 rounded-full border-4 border-emerald-100 border-t-emerald-500 animate-spin mb-4" />
+                        <p className="font-black text-emerald-600 uppercase tracking-widest text-xs">Calibrating Path...</p>
+                    </div>
                 )}
               </CardContent>
             </Card>
           </div>
 
-          {/* RIGHT */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-white">
-              Available Routes
-            </h2>
-
-            {routes.map((route) => (
-              <Card
-                key={route.id}
-                onClick={() => setSelectedRoute(route.id)}
-                className={`cursor-pointer transition-all duration-300 transform hover:scale-[1.02] border-2 ${
-                  selectedRoute === route.id
-                    ? "border-emerald-500 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.1)]"
-                    : "border-white/5 bg-white/5"
-                } rounded-[2rem]`}
-              >
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className={`text-lg font-bold ${selectedRoute === route.id ? 'text-emerald-400' : 'text-white'}`}>
-                        {route.name}
-                      </h3>
-                      <div className="flex gap-2 mt-1">
-                         {route.avgAQI < 60 && <span className="bg-emerald-500/20 text-emerald-400 text-[9px] px-2 py-0.5 rounded-full border border-emerald-500/30 uppercase font-bold">Purest Air</span>}
-                         {route.name.includes("Swift") && <span className="bg-amber-500/20 text-amber-400 text-[9px] px-2 py-0.5 rounded-full border border-amber-500/30 uppercase font-bold">Time Saver</span>}
-                      </div>
-                    </div>
-                    <AQIBadge value={route.avgAQI} size="lg" />
-                  </div>
-
-                  {/* Travel Stats */}
-                  <div className="flex gap-6 text-gray-400 text-sm my-4 bg-black/20 p-3 rounded-2xl">
-                    <span className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-amber-400" />
-                      {route.duration}
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <RouteIcon className="w-4 h-4 text-emerald-400" />
-                      {route.distance}
-                    </span>
-                  </div>
-
-                  {/* Visual AQI Gradient */}
-                  <div className="space-y-1 mb-4">
-                    <p className="text-[10px] text-gray-500 uppercase font-medium">Air consistency along path</p>
-                    <div className="flex gap-1.5 h-1.5">
-                      {route.pollutionSegments?.slice(0, 10).map((s, i) => (
-                        <div
-                          key={i}
-                          className="flex-1 rounded-full"
-                          style={{
-                            backgroundColor: getAQIColor(s.aqi),
-                            opacity: s.aqi ? 1 : 0.2
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Human Tip Card */}
-                  {selectedRoute === route.id && (
-                    <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-500">
-                      <div className="flex gap-3">
-                        <div className="bg-emerald-500 p-2 rounded-xl h-fit">
-                          <AlertTriangle className="w-4 h-4 text-black" />
-                        </div>
-                        <div>
-                          <p className="text-white text-sm font-semibold mb-1">Travel Advice</p>
-                          <p className="text-emerald-100/70 text-xs leading-relaxed">
-                            {route.healthAdvice}
-                          </p>
-                          <p className="text-amber-400 text-[10px] mt-2 italic">
-                            💡 {route.travelTip}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Pollution Table */}
-        {/* {routes[selectedRoute]?.pollutionSegments && (
-          <div className="mt-6 bg-black/30 p-4 rounded-lg">
-            <h3 className="text-white mb-3 font-semibold">
-              Pollution Zones Along Route
-            </h3>
-
-            <table className="w-full text-sm text-gray-300">
-              <thead>
-                <tr>
-                  <th className="text-left">Segment</th>
-                  <th>AQI</th>
-                  <th>Zone</th>
-                </tr>
-              </thead>
-            <tbody>
-  {routes[selectedRoute].pollutionSegments.map((s, i) => (
-    <tr key={i}>
-      <td className="text-left">
-        {s.area || `Segment ${i + 1}`}
-      </td>
-      <td>{s.aqi ?? "N/A"}</td>
-      <td
-        className={
-          s.zone === "High"
-            ? "text-red-400"
-            : s.zone === "Medium"
-            ? "text-yellow-400"
-            : "text-green-400"
-        }
-      >
-        {s.zone}
-      </td>
-    </tr>
-  ))}
-</tbody>
-
-            </table>
-          </div>
-        )} */}
-
-        {routes[selectedRoute]?.pollutionSegments &&
-          routes[selectedRoute]?.pollutionSegments.length > 0 && (
-            <div className="mt-8 rounded-2xl border border-[rgba(16,185,129,0.2)] bg-[rgba(15,25,23,0.95)] p-6">
-              {/* Header */}
-              <h3 className="mb-6 text-xl font-semibold text-white">
-                Pollution Zones Along Route (
-                {routes[selectedRoute]?.pollutionSegments.length} segments)
-              </h3>
-
-              {/* Segments */}
-              <div className="space-y-4">
-                {routes[selectedRoute]?.pollutionSegments.map((s, i) => {
-                  const zoneColor =
-                    s.zone === "High"
-                      ? "text-red-500"
-                      : s.zone === "Medium"
-                        ? "text-yellow-400"
-                        : "text-green-400";
-
-                  return (
-                    <div
-                      key={i}
-                      className="flex flex-col gap-4 rounded-xl border border-white/5 bg-[rgba(17,34,30,0.9)] p-4 md:flex-row md:items-center md:justify-between"
-                    >
-                      {/* Left side */}
-                      <div className="flex items-start gap-4">
-                        <div className="text-sm text-gray-400">{i + 1}.</div>
-
-                        <div>
-                          <p className="font-medium text-white">
-                            {s.area || s.name || `Segment ${i + 1}`}
-                          </p>
-                          <p className="text-sm text-gray-400">
-                            Lat: {s.lat ? s.lat.toFixed(4) : "-"}, Lon:{" "}
-                            {s.lon ? s.lon.toFixed(4) : "-"}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Right side */}
-                      <div className="flex items-center gap-4">
-                        {/* AQI badge */}
-                        <span
-                          className="rounded-full px-3 py-1 text-sm font-semibold"
-                          style={{
-                            backgroundColor: getAQIColor(s.aqi),
-                            color: s.aqi <= 100 ? "#000" : "#fff",
-                          }}
-                        >
-                          AQI {s.aqi || "N/A"}
-                        </span>
-
-                        {/* Zone */}
-                        <span className={`text-sm font-medium ${zoneColor}`}>
-                          {s.zone || "-"}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+          {/* SUGGESTED ROUTES COLUMN */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="flex items-center justify-between mb-2">
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
+                    <Zap className="w-6 h-6 text-emerald-500" />
+                    Routes
+                </h2>
+                {routes.length > 0 && <span className="px-3 py-1 bg-white border border-emerald-100 rounded-full text-[10px] font-black text-emerald-600 uppercase italic">Smart Choice Ready</span>}
             </div>
-          )}
 
-        {/* Human Touch - Eco Tip Footer */}
-        <div className="mt-16 text-center pb-20">
-           <div className="inline-block p-8 bg-gradient-to-br from-emerald-500/5 to-amber-500/5 border border-white/5 rounded-[3rem] max-w-2xl relative overflow-hidden">
-             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px] rounded-full" />
-             <p className="text-emerald-400 font-bold uppercase tracking-widest text-xs mb-3">Today's Mindfulness</p>
-             <p className="text-gray-300 text-lg leading-relaxed italic">
-               "Choosing the cleaner path isn't just about your health—it's a small vote for a greener planet. Every kilometer where you breathe clean air is a win for everyone."
-             </p>
-           </div>
+            {loading && routes.length === 0 ? (
+                [1,2,3].map(i => (
+                    <Card key={i} className="bg-white/50 border-none rounded-[2rem] h-32 animate-pulse mb-4"></Card>
+                ))
+            ) : routes.length > 0 ? (
+                <div className="space-y-4">
+                    {routes.map((route) => (
+                      <Card
+                        key={route.id}
+                        onClick={() => setSelectedRoute(route.id)}
+                        className={`cursor-pointer transition-all duration-500 border-2 rounded-[2.5rem] p-8 relative overflow-hidden ${
+                          selectedRoute === route.id
+                            ? "border-emerald-500 bg-white shadow-2xl shadow-emerald-900/10 -translate-y-1"
+                            : "border-transparent bg-white/60 hover:border-emerald-100 hover:bg-white"
+                        }`}
+                      >
+                         {selectedRoute === route.id && <div className="absolute top-0 right-0 p-4"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div></div>}
+                        <CardContent className="p-0">
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 className={`text-xl font-black tracking-tighter leading-none ${selectedRoute === route.id ? 'text-emerald-600' : 'text-gray-800'}`}>
+                                    {route.name}
+                                </h3>
+                                <div className="flex gap-2 mt-2">
+                                    {route.avgAQI < 60 && <span className="bg-emerald-50 text-emerald-600 text-[9px] px-2 py-0.5 rounded-lg border border-emerald-100 uppercase font-black tracking-widest">Elite Air</span>}
+                                    {route.name.includes("Swift") && <span className="bg-orange-50 text-orange-600 text-[9px] px-2 py-0.5 rounded-lg border border-orange-100 uppercase font-black tracking-widest">Nitro</span>}
+                                </div>
+                            </div>
+                            <AQIBadge value={route.avgAQI} size="lg" />
+                          </div>
+
+                          <div className="flex gap-4 text-gray-500 text-sm font-bold bg-gray-50/50 p-4 rounded-2xl border border-gray-100/50 mb-6">
+                            <span className="flex items-center gap-2">
+                              <Clock className="w-5 h-5 text-orange-400" />
+                              {route.duration}
+                            </span>
+                            <div className="w-px h-5 bg-gray-200"></div>
+                            <span className="flex items-center gap-2">
+                              <RouteIcon className="w-5 h-5 text-emerald-400" />
+                              {route.distance}
+                            </span>
+                          </div>
+
+                          {/* Human Health Insight */}
+                          {selectedRoute === route.id && (
+                             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden flex gap-0.5">
+                                    {route.pollutionSegments?.slice(0, 10).map((s, i) => (
+                                        <div key={i} className="h-full flex-1" style={{ backgroundColor: getAQIColor(s.aqi), opacity: s.aqi ? 1 : 0.1 }}></div>
+                                    ))}
+                                </div>
+                                <div className="p-5 bg-emerald-50 border border-emerald-100 rounded-[1.8rem]">
+                                    <p className="text-gray-900 font-black text-sm mb-1 uppercase tracking-tight flex items-center gap-2">
+                                        <Leaf className="w-4 h-4 text-emerald-500" /> Wellness Intel
+                                    </p>
+                                    <p className="text-gray-600 font-medium text-xs leading-relaxed italic">"{route.healthAdvice}"</p>
+                                </div>
+                             </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                </div>
+            ) : (
+                <div className="p-12 text-center bg-white/40 border border-emerald-100 rounded-[2.5rem] border-dashed">
+                    <RouteIcon className="w-12 h-12 text-emerald-200 mx-auto mb-4" />
+                    <p className="text-emerald-900 font-black text-lg">Path Not Found</p>
+                    <p className="text-emerald-600/60 text-xs font-medium mt-1">Start your journey by entering a destination city above.</p>
+                </div>
+            )}
+          </div>
         </div>
 
-        {/* Google Navigation */}
-        {routes.length > 0 && (
-          <div className="fixed bottom-8 right-6">
-            <Button
-              onClick={() =>
-                window.open(
-                  `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`,
-                  "_blank",
-                )
-              }
-              className="bg-emerald-500 px-8 py-6 rounded-full shadow-lg"
-            >
-              <Navigation className="w-5 h-5 mr-2" />
-              Start Navigation
-            </Button>
-          </div>
+        {/* BOTTOM SECTION - AIR QUALITY LOG */}
+        {routes[selectedRoute]?.pollutionSegments && routes[selectedRoute]?.pollutionSegments.length > 0 && (
+            <div className="mt-16 animate-in fade-in duration-1000">
+                <div className="flex items-center gap-4 mb-10">
+                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border border-emerald-100 shadow-sm">
+                        <Zap className="w-6 h-6 text-emerald-500" />
+                    </div>
+                    <div>
+                        <h3 className="text-3xl font-black text-gray-900 tracking-tight">Segment Analysis</h3>
+                        <p className="text-gray-500 font-medium">Deep-dive into air quality data across your selected journey.</p>
+                    </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {routes[selectedRoute]?.pollutionSegments.slice(0, 6).map((s, i) => (
+                        <div key={i} className="p-8 bg-white rounded-[2.5rem] border border-emerald-50 shadow-sm hover:shadow-xl transition-all duration-500 relative group overflow-hidden">
+                             <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50/50 rounded-full blur-3xl -z-10 group-hover:bg-emerald-50 transition-colors"></div>
+                            <div className="flex items-start justify-between mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center font-black text-gray-300 border border-gray-100">
+                                    {i + 1}
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[.2em] mb-1">Status</p>
+                                    <p className={`font-black uppercase text-sm ${s.zone === "High" ? 'text-red-500' : s.zone === "Medium" ? 'text-orange-500' : 'text-emerald-500'}`}>{s.zone || "SAFE"}</p>
+                                </div>
+                            </div>
+                            <h4 className="text-xl font-black text-gray-800 tracking-tight mb-2 truncate uppercase">{s.area || "Checkpoint"}</h4>
+                            <p className="text-xs font-bold text-gray-400 mb-6">{s.lat?.toFixed(3)}°N, {s.lon?.toFixed(3)}°E</p>
+                            
+                            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Air Quality<br/>Index</p>
+                                <div className="w-px h-6 bg-gray-200 mx-2"></div>
+                                <p className="text-3xl font-black tracking-tighter" style={{ color: getAQIColor(s.aqi) }}>{s.aqi ?? "N/A"}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
         )}
-      </div>
+      </main>
+
+      {routes.length > 0 && (
+        <div className="fixed bottom-10 right-10 z-[100] animate-bounce-slow">
+            <Button
+              onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`, "_blank")}
+              className="bg-emerald-500 hover:bg-emerald-600 h-20 px-12 rounded-[2.5rem] shadow-2xl shadow-emerald-400/40 text-white font-black text-xl flex items-center gap-4 group"
+            >
+              <Navigation className="w-8 h-8 group-hover:rotate-12 transition-transform" />
+              NAVIGATE
+            </Button>
+        </div>
+      )}
+      
+      <Footer />
     </div>
   );
 };

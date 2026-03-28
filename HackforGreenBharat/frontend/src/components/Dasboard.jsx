@@ -11,27 +11,34 @@ import {
   Brain,
   ShieldCheck,
   Users,
+  Sparkles,
+  Zap,
+  ArrowUpRight
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import ScoreBreakdown from "./ScoreBreakdown";
 import { serverUrl } from "@/main";
+import Footer from "@/pages/Footer";
 
 const getScoreMeta = (score) => {
   if (score >= 701)
     return {
-      text: "text-green-400",
+      text: "text-emerald-600",
       label: "Low Pollution Impact",
+      bg: "bg-emerald-50",
     };
 
   if (score >= 401)
     return {
-      text: "text-yellow-400",
+      text: "text-amber-600",
       label: "Moderate Pollution Impact",
+      bg: "bg-amber-50",
     };
 
   return {
-    text: "text-red-400",
+    text: "text-rose-600",
     label: "High Pollution Impact",
+    bg: "bg-rose-50",
   };
 };
 
@@ -58,11 +65,11 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0f0d]">
+      <div className="min-h-screen flex items-center justify-center bg-[#f0faf5]">
         <Navbar />
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-14 h-14 rounded-full border-4 border-green-500/20 border-t-green-500 animate-spin" />
-          <p className="text-gray-400 text-sm">Loading dashboard...</p>
+        <div className="flex flex-col items-center gap-6">
+          <div className="w-16 h-16 rounded-full border-4 border-emerald-100 border-t-emerald-500 animate-spin" />
+          <p className="text-emerald-600 font-black uppercase tracking-widest text-xs">Assembling Your Impact...</p>
         </div>
       </div>
     );
@@ -72,76 +79,87 @@ const Dashboard = () => {
   const meta = getScoreMeta(score);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#0a0f0d] to-[#0d1512]">
+    <div className="min-h-screen w-full bg-[#f0faf5] pb-24">
       <Navbar />
 
-      <main className="pt-24 pb-16 px-4">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <main className="pt-32 pb-16 px-6">
+        <div className="max-w-7xl mx-auto space-y-12">
           {/* Header */}
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white">
-              Welcome back,{" "}
-              <span className="bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
-                {assessment?.userId?.name || "Eco Warrior"}
-              </span>
-            </h1>
-            <p className="text-gray-400 mt-1">
-              Your environmental impact overview
-            </p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative">
+              <div className="absolute -top-20 -left-20 w-80 h-80 bg-emerald-100/40 blur-[120px] rounded-full -z-10"></div>
+            <div>
+               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-4">
+                  <Sparkles className="w-4 h-4 text-emerald-600" />
+                  <span className="text-sm font-black text-emerald-600 tracking-wide uppercase">Environmental Intelligence</span>
+              </div>
+               <h1 className="text-5xl font-black text-gray-900 tracking-tight leading-none">
+                Earth Guardian, <span className="text-emerald-500">
+                  {assessment?.userId?.name?.split(' ')[0] || "Eco Warrior"}
+                </span>
+              </h1>
+              <p className="text-gray-500 mt-4 text-xl font-medium max-w-2xl">
+                Your journey towards a sustainable future is being mapped in real-time.
+              </p>
+            </div>
+            <Link to="/questionnaire">
+               <Button className="h-16 px-10 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl shadow-2xl shadow-emerald-200 transition-all active:scale-95 flex items-center gap-2">
+                UPDATE HABITS
+                <ArrowUpRight className="w-6 h-6" />
+              </Button>
+            </Link>
           </div>
 
           {/* ROW 1 → Score + Breakdown */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Eco Score */}
-            <Card className="border border-emerald-900/40 bg-[rgba(15,25,23,0.7)] backdrop-blur-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-white">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-green-500/20">
-                    <Leaf className="w-4 h-4 text-green-400" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            {/* Eco Score Card */}
+            <div className="bg-white rounded-[3rem] p-10 border border-emerald-50 shadow-2xl shadow-emerald-900/5 relative overflow-hidden group">
+               <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                 <Leaf size={240} className="text-emerald-500" />
+               </div>
+               <h3 className="text-2xl font-black text-gray-900 mb-10 flex items-center gap-4">
+                 <div className="w-12 h-12 rounded-[1.2rem] bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                    <Leaf className="w-6 h-6 text-emerald-500" />
+                 </div>
+                 Eco Impact Score
+               </h3>
+
+               <div className="flex flex-col items-center py-6">
+                  <PollutionScoreRing score={score} size={280} strokeWidth={20} />
+                  <div className="mt-12 text-center">
+                    <p className={`text-4xl font-black tracking-tighter ${meta.text} uppercase`}>
+                      {assessment?.level || "Analyzing..."}
+                    </p>
+                    <p className="text-gray-400 font-bold mt-2 uppercase tracking-[0.2em] text-xs">Current Resilience Level</p>
                   </div>
-                  Eco Pollution Score
-                </CardTitle>
-              </CardHeader>
+               </div>
+            </div>
 
-              <CardContent className="flex flex-col items-center py-6">
-                <PollutionScoreRing score={score} size={180} />
-
-                <p className={`mt-4 text-lg font-semibold ${meta.text}`}>
-                  {assessment?.level || "No Data"}
-                </p>
-
-                <Link to="/questionnaire" className="w-full mt-6">
-                  <Button className="w-full bg-gradient-to-r from-green-500 to-teal-500 text-black font-semibold">
-                    Update Score
-                    <ChevronRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Score Breakdown */}
+            {/* Score Breakdown (Assume it handles its own internal spacing if updated) */}
             <ScoreBreakdown answers={assessment?.answers} />
           </div>
 
           {/* ROW 2 → AI Analysis (FULL WIDTH) */}
-          <Card className="border border-purple-900/40 bg-[rgba(15,25,23,0.75)] backdrop-blur-xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-white text-xl">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-purple-500/20">
-                  <Brain className="w-5 h-5 text-purple-400" />
+          <Card className="border-none bg-white rounded-[3.5rem] shadow-2xl shadow-emerald-900/5 overflow-hidden">
+            <CardHeader className="bg-purple-500/5 px-10 pt-10 pb-6">
+              <CardTitle className="flex items-center gap-4 text-gray-900 text-2xl font-black uppercase tracking-tight">
+                <div className="w-12 h-12 rounded-[1.2rem] flex items-center justify-center bg-purple-500 shadow-lg shadow-purple-100">
+                  <Brain className="w-6 h-6 text-white" />
                 </div>
-                AI Pollution Analysis
+                Deep Neural Analysis
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="text-gray-300 leading-relaxed text-[15px]">
+            <CardContent className="text-gray-700 leading-relaxed text-xl font-medium p-10">
               {assessment ? (
-                assessment.aiExplanation
+                <p className="italic">"{assessment.aiExplanation}"</p>
               ) : (
-                <div className="flex flex-col items-center py-10">
-                  <AlertTriangle className="w-10 h-10 text-yellow-500/60 mb-3" />
-                  <p className="text-gray-400">
-                    Complete the assessment to see AI analysis.
+                <div className="flex flex-col items-center py-16">
+                  <div className="w-20 h-20 rounded-[2rem] bg-amber-50 flex items-center justify-center mb-6">
+                    <AlertTriangle className="w-10 h-10 text-amber-500" />
+                  </div>
+                  <p className="text-gray-900 font-black text-xl mb-2">Analysis Missing</p>
+                  <p className="text-gray-400 font-medium max-w-sm text-center">
+                    Complete your periodic assessment to unlock personalized AI insights and optimization paths.
                   </p>
                 </div>
               )}
@@ -150,63 +168,71 @@ const Dashboard = () => {
 
           {/* ROW 3 → Precautions */}
           {assessment && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="border border-green-900/40 bg-[rgba(15,25,23,0.7)] backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <ShieldCheck className="w-5 h-5 text-green-400" />
-                    Personal Actions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="bg-white rounded-[3rem] p-10 border border-emerald-50 shadow-xl shadow-emerald-900/5 relative overflow-hidden">
+                 <div className="absolute -bottom-10 -right-10 opacity-5">
+                    <ShieldCheck size={180} className="text-emerald-500" />
+                 </div>
+                 <h3 className="flex items-center gap-4 text-gray-900 font-black text-2xl mb-10 uppercase tracking-tight">
+                    <div className="w-12 h-12 rounded-[1.2rem] bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                      <ShieldCheck className="w-6 h-6 text-emerald-600" />
+                    </div>
+                    Personal Growth
+                 </h3>
+                 <ul className="space-y-6 relative z-10">
                     {assessment.precautions.personal.map((p, i) => (
-                      <li key={i} className="flex gap-3 text-gray-300">
-                        <span className="w-2 h-2 bg-green-400 rounded-full mt-2" />
-                        {p}
+                      <li key={i} className="flex gap-6 text-gray-800 bg-emerald-50/20 p-6 rounded-[2rem] border border-emerald-50 hover:bg-white hover:shadow-lg transition-all">
+                        <span className="w-10 h-10 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-sm font-black shrink-0 shadow-lg shadow-emerald-100">{i+1}</span>
+                        <span className="font-bold text-base leading-snug">{p}</span>
                       </li>
                     ))}
                   </ul>
-                </CardContent>
-              </Card>
+              </div>
 
-              <Card className="border border-blue-900/40 bg-[rgba(15,25,23,0.7)] backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <Users className="w-5 h-5 text-blue-400" />
-                    Area & Community Actions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
+              <div className="bg-white rounded-[3rem] p-10 border border-blue-50 shadow-xl shadow-blue-900/5 relative overflow-hidden">
+                 <div className="absolute -bottom-10 -right-10 opacity-5">
+                    <Users size={180} className="text-blue-500" />
+                 </div>
+                 <h3 className="flex items-center gap-4 text-gray-900 font-black text-2xl mb-10 uppercase tracking-tight">
+                    <div className="w-12 h-12 rounded-[1.2rem] bg-blue-50 flex items-center justify-center border border-blue-100">
+                      <Users className="w-6 h-6 text-blue-600" />
+                    </div>
+                    Community Impact
+                 </h3>
+                 <ul className="space-y-6 relative z-10">
                     {assessment.precautions.area.map((p, i) => (
-                      <li key={i} className="flex gap-3 text-gray-300">
-                        <span className="w-2 h-2 bg-blue-400 rounded-full mt-2" />
-                        {p}
+                      <li key={i} className="flex gap-6 text-gray-800 bg-blue-50/20 p-6 rounded-[2rem] border border-blue-50 hover:bg-white hover:shadow-lg transition-all">
+                        <span className="w-10 h-10 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-sm font-black shrink-0 shadow-lg shadow-blue-100">{i+1}</span>
+                        <span className="font-bold text-base leading-snug">{p}</span>
                       </li>
                     ))}
                   </ul>
-                </CardContent>
-              </Card>
+              </div>
             </div>
           )}
 
-          {/* ROW 4 → AQI */}
-          <Card className="border border-sky-900/40 bg-[rgba(15,25,23,0.7)] backdrop-blur-xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Wind className="w-5 h-5 text-sky-400" />
-                Air Quality (Live)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center py-10">
-              <p className="text-gray-400">
-                Live AQI integration (OpenAQ / Google AQI) can be shown here.
-              </p>
-            </CardContent>
-          </Card>
+          {/* ROW 4 → AQI CTA */}
+          <div className="bg-white rounded-[3.5rem] p-16 border border-sky-50 shadow-2xl shadow-sky-900/5 text-center relative overflow-hidden group">
+             <div className="absolute inset-0 bg-gradient-to-b from-sky-50 to-transparent pointer-events-none"></div>
+             <div className="relative z-10">
+                 <div className="w-20 h-20 rounded-[2.5rem] bg-sky-500 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-sky-100 group-hover:scale-110 transition-transform">
+                    <Wind className="w-10 h-10 text-white" />
+                 </div>
+                 <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight uppercase">Live Path Insight</h3>
+                 <p className="text-gray-500 max-w-md mx-auto mb-10 text-lg font-medium">
+                   Unlock real-time atmosphere analysis and AQI-optimized routing across your city.
+                 </p>
+                 <Link to="/pollution">
+                   <Button className="h-16 px-12 bg-gray-900 hover:bg-black text-white rounded-2xl font-black text-lg transition-all shadow-xl active:scale-95">
+                     EXPLORE REAL-TIME MAP
+                   </Button>
+                 </Link>
+             </div>
+          </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };

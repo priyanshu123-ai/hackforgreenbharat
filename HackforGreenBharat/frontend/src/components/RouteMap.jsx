@@ -12,50 +12,45 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 /* ===== ICONS ===== */
-const redIcon = new L.Icon({
-  iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png",
+const originIcon = new L.Icon({
+  iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/red-pushpin.png",
   iconSize: [32, 32],
+  iconAnchor: [10, 32],
 });
 
-const blueIcon = new L.Icon({
-  iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png",
+const destIcon = new L.Icon({
+  iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/blue-pushpin.png",
   iconSize: [32, 32],
+  iconAnchor: [10, 32],
 });
 
 /* ===== HELPERS ===== */
 const getAQIColor = (aqi) => {
-  if (aqi === null) return "#9CA3AF";
-  if (aqi <= 120) return "#22C55E";
-  if (aqi <= 160) return "#FACC15";
-  if (aqi <= 200) return "#FB923C";
-  return "#EF4444";
-};
-
-const shouldWarnCloseGlass = (aqi) => {
-  return aqi !== null && aqi >= 150;
+  if (aqi === null || aqi === undefined) return "#9CA3AF";
+  if (aqi <= 50) return "#16a34a";   // green
+  if (aqi <= 100) return "#ca8a04";  // yellow
+  if (aqi <= 150) return "#ea580c";  // orange
+  if (aqi <= 200) return "#dc2626";  // red
+  return "#7c3aed";                  // purple
 };
 
 const getLabelCount = (distanceKm) => {
-  if (distanceKm < 50) return 3;
-  if (distanceKm < 150) return 4;
+  if (distanceKm < 50) return 2;
+  if (distanceKm < 200) return 3;
   return 5;
 };
 
 /* ===== AUTO FIT MAP ===== */
 const FitBounds = ({ origin, destination }) => {
   const map = useMap();
-
   useEffect(() => {
     if (!origin || !destination) return;
-
     const bounds = L.latLngBounds(
       [origin.lat, origin.lon],
-      [destination.lat, destination.lon],
+      [destination.lat, destination.lon]
     );
-
-    map.fitBounds(bounds, { padding: [30, 30] });
+    map.fitBounds(bounds, { padding: [50, 50] });
   }, [map, origin, destination]);
-
   return null;
 };
 
@@ -73,10 +68,8 @@ const RouteMap = ({ routes, selectedRouteId, origin, destination }) => {
     const total = selectedRoute.pollutionSegments.length;
     const distanceKm = parseFloat(selectedRoute.distance);
     const labelsToShow = getLabelCount(distanceKm);
-
     for (let i = 0; i < labelsToShow; i++) {
-      const index = Math.floor((i * total) / labelsToShow);
-      labelIndexes.add(index);
+      labelIndexes.add(Math.floor((i * total) / labelsToShow));
     }
   }
 
@@ -84,26 +77,23 @@ const RouteMap = ({ routes, selectedRouteId, origin, destination }) => {
     <MapContainer
       center={originPos}
       zoom={6}
-      className="h-[500px] w-full"
-      style={{ background: "#0a1f15" }}
+      className="h-[500px] w-full rounded-xl"
+      style={{ zIndex: 1 }}
     >
-      <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+      {/* 🗺️ LIGHT MAP TILE — CartoDB Positron (Google Maps style) */}
+      <TileLayer
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+      />
 
       <FitBounds origin={origin} destination={destination} />
 
-      {/* Origin */}
-      <Marker position={originPos} icon={redIcon}>
-        <Popup>
-          <strong className="text-emerald-500">Origin:</strong> {origin.name}
-        </Popup>
+      {/* Markers */}
+      <Marker position={originPos} icon={originIcon}>
+        <Popup><strong>Origin:</strong> {origin.name}</Popup>
       </Marker>
-
-      {/* Destination */}
-      <Marker position={destPos} icon={blueIcon}>
-        <Popup>
-          <strong className="text-blue-500">Destination:</strong>{" "}
-          {destination.name}
-        </Popup>
+      <Marker position={destPos} icon={destIcon}>
+        <Popup><strong>Destination:</strong> {destination.name}</Popup>
       </Marker>
 
       {routes.map((route) => {
@@ -112,79 +102,35 @@ const RouteMap = ({ routes, selectedRouteId, origin, destination }) => {
         if (isSelected && route.pollutionSegments?.length > 1) {
           return route.pollutionSegments.map((seg, i) => {
             if (i === route.pollutionSegments.length - 1) return null;
-
             const segColor = getAQIColor(seg.aqi);
-            const showWarning = shouldWarnCloseGlass(seg.aqi);
+            const nextSeg = route.pollutionSegments[i + 1];
 
             return (
               <Fragment key={`${route.id}-seg-${i}`}>
-                {/* 🔥 AQI SEGMENT */}
                 <Polyline
-                  positions={[
-                    [seg.lat, seg.lon],
-                    [
-                      route.pollutionSegments[i + 1].lat,
-                      route.pollutionSegments[i + 1].lon,
-                    ],
-                  ]}
-                  pathOptions={{
-                    color: segColor,
-                    weight: seg.aqi <= 120 ? 9 : 6,
-                    opacity: 1,
-                  }}
+                  positions={[[seg.lat, seg.lon], [nextSeg.lat, nextSeg.lon]]}
+                  pathOptions={{ color: segColor, weight: 8, opacity: 0.85, lineCap: "round" }}
                 >
                   {labelIndexes.has(i) && (
-                    <Tooltip
-                      permanent
-                      direction="top"
-                      opacity={1}
-                      className="leaflet-tooltip-custom"
-                    >
-                      <div
-                        style={{
-                          background: "rgba(10,31,21,0.95)",
-                          color: "#ffffff", // ✅ FIX
-                          padding: "8px 12px",
-                          borderRadius: "8px",
-                          border: `2px solid ${segColor}`,
-                          boxShadow: `0 4px 20px ${segColor}40`,
-                          fontSize: "13px",
-                          fontWeight: 600,
-                          zIndex: 9999, // ✅ FIX
-                        }}
-                      >
-                        <div style={{ color: segColor }}>
-                          {seg.zone || "Unknown"}
-                        </div>
-                        <div>AQI: {seg.aqi ?? "N/A"}</div>
+                    <Tooltip permanent direction="top" opacity={1}>
+                      <div style={{
+                        background: "#fff",
+                        border: `3px solid ${segColor}`,
+                        borderRadius: "10px",
+                        padding: "6px 12px",
+                        boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+                        fontSize: "13px",
+                        fontWeight: 700,
+                        color: "#111",
+                        minWidth: "100px",
+                        textAlign: "center",
+                      }}>
+                        <div style={{ color: segColor, fontWeight: 800 }}>{seg.zone || "Unknown"}</div>
+                        <div style={{ color: "#555", fontWeight: 600 }}>AQI: {seg.aqi ?? "N/A"}</div>
                       </div>
                     </Tooltip>
                   )}
                 </Polyline>
-
-                {/* 🚗⚠️ POLLUTION WARNING */}
-                {showWarning && (
-                  <Marker
-                    position={[seg.lat, seg.lon]}
-                    icon={L.divIcon({
-                      className: "",
-                      html: "🚗⚠️",
-                      iconSize: [24, 24],
-                    })}
-                  >
-                    <Popup>
-                      <div className="text-sm font-medium text-red-500">
-                        🚨 High Pollution Area
-                        <br />
-                        <span className="text-white">
-                          Please close car windows
-                        </span>
-                        <br />
-                        AQI: {seg.aqi}
-                      </div>
-                    </Popup>
-                  </Marker>
-                )}
               </Fragment>
             );
           });
@@ -192,16 +138,14 @@ const RouteMap = ({ routes, selectedRouteId, origin, destination }) => {
 
         /* Non-selected routes */
         const positions = route.geometry?.map((p) => [p.lat, p.lon]) || [];
+        const colors = ["#3b82f6", "#8b5cf6", "#f59e0b"];
+        const routeColor = colors[route.id % colors.length] || "#9CA3AF";
 
         return (
           <Polyline
             key={route.id}
             positions={positions}
-            pathOptions={{
-              color: "#4b5563",
-              weight: 4,
-              opacity: 0.4,
-            }}
+            pathOptions={{ color: routeColor, weight: 5, opacity: 0.45, dashArray: "8 4" }}
           />
         );
       })}

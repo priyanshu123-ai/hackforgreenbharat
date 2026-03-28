@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import Navbar from "@/components/Navbar";
-import { ArrowRight,BatteryCharging, Bike, Building2, Car, CheckCircle2, Droplets, Factory, HardHat, Leaf, Lightbulb, MapPin, Recycle, Sun, Target, Train, TrendingDown, Users, Wind, Zap } from "lucide-react";
+import { ArrowRight, BatteryCharging, Bike, Building2, Car, CheckCircle2, Droplets, Factory, HardHat, Leaf, Lightbulb, MapPin, Recycle, Sun, Target, Train, TrendingDown, Users, Wind, Zap, Loader2, Navigation } from "lucide-react";
 import { getCityPollution } from "@/services/pollutionApi";
 import { getCurrentCity } from "@/utils/getCurrentCity";
 import { getAQIColorClass } from "@/utils/aqiColor";
@@ -8,6 +8,7 @@ import { sectorColorMap } from "@/utils/sectorColors";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
 import { validateCity } from "@/utils/validateCity";
+import React from "react";
 
 const pollutionSectors = [
   {
@@ -16,9 +17,7 @@ const pollutionSectors = [
     icon: <Car style={{ width: 32, height: 32 }} />,
     color: "#F97316",
     bgColor: "rgba(249, 115, 22, 0.15)",
-    //   percentage: currentState.transport,
-    description:
-      "Emissions from cars, trucks, buses, and two-wheelers burning fossil fuels.",
+    description: "Emissions from cars, trucks, buses, and two-wheelers burning fossil fuels.",
     detailedSolutions: [
       {
         title: "Switch to Electric Vehicles",
@@ -61,9 +60,7 @@ const pollutionSectors = [
     icon: <Factory style={{ width: 32, height: 32 }} />,
     color: "#8B5CF6",
     bgColor: "rgba(139, 92, 246, 0.15)",
-    //   percentage: currentState.industry,
-    description:
-      "Pollution from manufacturing, refineries, and industrial processes.",
+    description: "Pollution from manufacturing, refineries, and industrial processes.",
     detailedSolutions: [
       {
         title: "Clean Production Technologies",
@@ -106,9 +103,7 @@ const pollutionSectors = [
     icon: <Zap style={{ width: 32, height: 32 }} />,
     color: "#EAB308",
     bgColor: "rgba(234, 179, 8, 0.15)",
-    //   percentage: currentState.power,
-    description:
-      "Emissions from coal-fired power plants and electricity generation.",
+    description: "Emissions from coal-fired power plants and electricity generation.",
     detailedSolutions: [
       {
         title: "Solar Power Revolution",
@@ -151,9 +146,7 @@ const pollutionSectors = [
     icon: <HardHat style={{ width: 32, height: 32 }} />,
     color: "#14B8A6",
     bgColor: "rgba(20, 184, 166, 0.15)",
-    //   percentage: currentState.construction,
-    description:
-      "Dust from construction sites, road building, and demolition activities.",
+    description: "Dust from construction sites, road building, and demolition activities.",
     detailedSolutions: [
       {
         title: "Dust Suppression Systems",
@@ -207,18 +200,15 @@ const PollutionSources = () => {
 
     try {
       setLoading(true);
+      const validated = await validateCity(cityInput);
 
-        const validated = await validateCity(cityInput);
+      if (!validated) {
+        alert("❌ Invalid city name");
+        setData(null);
+        return;
+      }
 
-   if (!validated) {
-  alert("❌ Invalid city name");
-  setData(null);          // ✅ CLEAR OLD RESULT
-  return;
-}
-
-
-    // ✅ NORMALIZED CITY
-    setInputCity(validated.city);
+      setInputCity(validated.city);
       const res = await getCityPollution(validated.city);
       if (id !== requestRef.current) return;
       setData(res);
@@ -239,260 +229,188 @@ const PollutionSources = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0c1210] to-[#060908] text-[#f0f5f2]">
+    <div className="min-h-screen bg-[#f0faf5] text-gray-800">
       <Navbar />
 
       {/* HERO */}
-      <section className="pt-[110px] pb-[60px] text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 mb-6">
-          <Factory className="w-4 h-4 text-red-500" />
-          <span className="text-sm font-medium text-red-500">
-            Pollution Analysis
+      <section className="pt-[130px] pb-[60px] text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+          <Factory className="w-4 h-4 text-emerald-600" />
+          <span className="text-sm font-semibold text-emerald-600">
+            Pollution Intelligence
           </span>
         </div>
 
-        <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-4">
-          Understanding{" "}
-          <span className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
-            Pollution Sources
-          </span>
+        <h1 className="text-[clamp(2.5rem,6vw,4rem)] font-black mb-4 text-gray-900 tracking-tight">
+          Detecting <span className="text-emerald-500">Pollution Drivers</span>
         </h1>
+        <p className="text-gray-500 max-w-2xl mx-auto text-lg font-medium px-4">
+          Uncovering the specific sources impacting your local atmosphere in real-time.
+        </p>
       </section>
 
       {/* SEARCH */}
-      <div className="max-w-[1280px] mx-auto px-4 mb-12">
-        <div className="bg-[#0f1917]/80 border border-white/10 rounded-2xl p-4 flex flex-wrap gap-3 backdrop-blur-xl">
-          <input
-            value={inputCity}
-            onChange={(e) => setInputCity(e.target.value)}
-            placeholder="Enter city"
-            className="flex-1 px-4 py-2 rounded-lg bg-[#0f1917] border border-gray-600 outline-none"
-          />
+      <div className="max-w-[1200px] mx-auto px-6 mb-12">
+        <div className="bg-white border border-emerald-100 rounded-[2rem] p-5 flex flex-wrap gap-4 shadow-lg shadow-emerald-900/5 items-center">
+          <div className="flex-1 min-w-[280px] relative">
+            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              value={inputCity}
+              onChange={(e) => setInputCity(e.target.value)}
+              placeholder="Search destination or city..."
+              className="w-full pl-12 pr-4 py-4 rounded-2xl bg-gray-50/50 border border-gray-100 outline-none text-lg font-medium focus:border-emerald-400 focus:bg-white transition-all shadow-inner"
+            />
+          </div>
 
-          <button
-            disabled={isLoading}
-            onClick={() => fetchData(inputCity)}
-            className="px-6 py-2 rounded-lg bg-green-500 text-black font-semibold disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {loading && (
-              <span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />
-            )}
-            Search
-          </button>
+          <div className="flex gap-3 w-full sm:w-auto">
+            <button
+              disabled={isLoading}
+              onClick={() => fetchData(inputCity)}
+              className="flex-1 sm:flex-none px-10 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-lg shadow-lg shadow-emerald-200 transition-all hover:scale-[1.02] flex items-center justify-center gap-3 disabled:opacity-50"
+            >
+              {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+              Search
+            </button>
 
-          <button
-            disabled={isLoading}
-            onClick={handleUseCurrentLocation}
-            className="px-6 py-2 rounded-lg bg-blue-500 text-black font-semibold disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {locLoading && (
-              <span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />
-            )}
-            Use Current Location
-          </button>
+            <button
+              disabled={isLoading}
+              onClick={handleUseCurrentLocation}
+              className="flex-1 sm:flex-none px-6 py-4 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-200 text-emerald-600 font-bold hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+            >
+              <Navigation className="w-5 h-5" />
+              Local
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* 🌿 BEAUTIFUL LOADER */}
+      {/* LOADER */}
       {isLoading && (
-        <div className="flex justify-center items-center py-24">
-          <div className="relative bg-[#0f1917]/80 border border-white/10 rounded-3xl px-14 py-12 backdrop-blur-xl shadow-[0_0_80px_rgba(34,197,94,0.25)]">
-            {/* Spinner */}
-            <div className="relative w-20 h-20 mx-auto mb-6">
-              <div className="absolute inset-0 rounded-full border-4 border-green-500/30" />
-              <div className="absolute inset-0 rounded-full border-4 border-green-500 border-t-transparent animate-spin" />
-              <div className="absolute inset-3 rounded-full bg-green-500/30 animate-pulse" />
+        <div className="flex justify-center items-center py-20 px-6">
+          <div className="bg-white border border-emerald-100 rounded-[3rem] p-12 shadow-xl flex flex-col items-center max-w-sm w-full">
+            <div className="relative w-20 h-20 mb-8">
+               <div className="absolute inset-0 rounded-full border-4 border-emerald-100" />
+               <div className="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin" />
+               <div className="absolute inset-4 rounded-full bg-emerald-50 animate-pulse flex items-center justify-center">
+                  <Wind className="w-6 h-6 text-emerald-500" />
+               </div>
             </div>
-
-            <p className="text-center text-green-400 font-semibold text-lg">
-              Fetching pollution data
-            </p>
-            <p className="text-center text-gray-400 text-sm mt-1">
-              Please wait a moment…
-            </p>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Analyzing Atmosphere</h3>
+            <p className="text-center text-gray-400 font-medium">Synchronizing with global AQI sensors...</p>
           </div>
         </div>
       )}
 
       {/* RESULT */}
       {!isLoading && data && (
-        <div>
-            <div className="max-w-[1280px] mx-auto px-4 pb-24">
-          <div className="bg-[#0f1917]/80 border border-white/10 rounded-[32px] p-8 backdrop-blur-xl shadow-[0_0_120px_rgba(34,197,94,0.08)]">
-            {/* TOP */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
-              <div className="flex items-center gap-5">
-                <div className="w-16 h-16 rounded-2xl bg-red-500/20 flex items-center justify-center">
-                  <MapPin className="w-8 h-8 text-red-500" />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold">{data.city}</h2>
-                  <p className="text-sm text-gray-400">
-                    Lat {data.coordinates.lat.toFixed(4)} • Lon{" "}
-                    {data.coordinates.lon.toFixed(4)}
-                  </p>
-                </div>
-              </div>
-
-              <div
-                className={`px-8 py-6 rounded-2xl text-center font-semibold ${getAQIColorClass(
-                  data.aqi
-                )}`}
-              >
-                <p className="text-xs uppercase opacity-80">Current AQI</p>
-                <p className="text-4xl font-bold">{data.aqi}</p>
-                <p className="text-sm">Very Unhealthy</p>
-              </div>
-            </div>
-
-            {/* SECTORS */}
-            <h3 className="text-gray-400 uppercase tracking-widest mb-6">
-              Pollution Contribution by Sector
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-              {Object.entries(data.contribution).map(([key, value]) => {
-                const colors = sectorColorMap[key];
-                return (
-                  <div
-                    key={key}
-                    className={`rounded-2xl p-5 border border-white/10 ${colors.bg}`}
-                  >
-                    <div className="flex justify-between mb-3">
-                      <span className={`${colors.text} capitalize`}>{key}</span>
-                      <span className={`text-3xl font-bold ${colors.text}`}>
-                        {value}%
-                      </span>
-                    </div>
-
-                    <div className="w-full h-2 bg-black/40 rounded mb-3">
-                      <div
-                        className={`h-2 rounded ${colors.bar}`}
-                        style={{ width: `${value}%` }}
-                      />
-                    </div>
-
-                    <p className="text-sm text-gray-400">
-                      {data.detectedSources?.[key] ?? 0} detected sources
-                    </p>
+        <>
+          <div className="max-w-[1200px] mx-auto px-6 pb-24">
+            <div className="bg-white border border-emerald-100 rounded-[3rem] p-10 shadow-sm relative overflow-hidden">
+               <div className="absolute -right-20 -top-20 w-64 h-64 bg-emerald-50/50 blur-[100px] rounded-full pointer-events-none"></div>
+              
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-8 relative z-10">
+                <div className="flex items-center gap-6">
+                  <div className="w-20 h-20 rounded-3xl bg-emerald-50 flex items-center justify-center border border-emerald-100 shadow-sm">
+                    <MapPin className="w-10 h-10 text-emerald-500" />
                   </div>
-                );
-              })}
+                  <div>
+                    <h2 className="text-4xl font-black text-gray-900 tracking-tight">{data.city}</h2>
+                    <div className="flex items-center gap-2 text-gray-400 font-bold text-xs uppercase tracking-widest mt-2 bg-gray-50 px-3 py-1 rounded-full w-fit border border-gray-100">
+                      LAT {data.coordinates.lat.toFixed(3)} <span className="opacity-30">•</span> LON {data.coordinates.lon.toFixed(3)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`flex items-center gap-6 p-6 rounded-[2.5rem] bg-gray-50 border border-gray-100 shadow-inner`}>
+                  <div className="text-right">
+                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Atmosphere Quality</p>
+                    <p className="text-xl font-bold text-gray-800">Unhealthy Impact</p>
+                  </div>
+                  <div className={`w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-black shadow-lg ${getAQIColorClass(data.aqi).replace('text-', 'text-white bg-')}`}>
+                    {data.aqi}
+                  </div>
+                </div>
+              </div>
+
+              <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-8 border-b border-gray-50 pb-4">
+                Sector Contribution Breakdown
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+                {Object.entries(data.contribution).map(([key, value]) => {
+                  const colors = sectorColorMap[key];
+                  const sectorIcon = pollutionSectors.find(s => s.key === key)?.icon || <Wind />;
+                  return (
+                    <div
+                      key={key}
+                      className="rounded-[2rem] p-7 border bg-gray-50 transition-all hover:bg-white hover:shadow-xl hover:shadow-emerald-900/5 group"
+                      style={{ borderColor: `${colors.hex}15` }}
+                    >
+                      <div className="flex justify-between items-start mb-6">
+                         <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white shadow-sm transition-transform group-hover:scale-110" style={{ color: colors.hex }}>
+                            {React.cloneElement(sectorIcon, { size: 24 })}
+                         </div>
+                         <span className="text-4xl font-black tracking-tighter" style={{ color: colors.hex }}>{value}%</span>
+                      </div>
+
+                      <div className="space-y-4">
+                         <h4 className="font-bold text-gray-800 capitalize text-lg">{key}</h4>
+                         <div className="w-full h-2.5 bg-white rounded-full overflow-hidden border border-gray-100">
+                           <div
+                             className="h-full rounded-full transition-all duration-1000"
+                             style={{ width: `${value}%`, background: colors.hex, boxShadow: `0 0 10px ${colors.hex}30` }}
+                           />
+                         </div>
+                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                           {data.detectedSources?.[key] ?? 0} Critical Sources
+                         </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
 
-            <div>
           <section className="py-[40px] pb-[80px]">
             <div className="max-w-[1280px] mx-auto px-4">
-              {/* Heading */}
               <div className="text-center mb-16">
-                <h2 className="font-['Space_Grotesk'] text-[clamp(1.5rem,4vw,2.5rem)] font-bold mb-4">
-                  How to{" "}
-                  <span className="bg-gradient-to-br from-[#22C55E] via-[#14B8A6] to-[#3B82F6] bg-clip-text text-transparent">
-                    Reduce Pollution
-                  </span>
-                </h2>
-                <p className="text-[#6b7c75] max-w-[600px] mx-auto">
-                  Comprehensive solutions for each pollution source — from
-                  individual actions to systemic changes.
-                </p>
+                <h2 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold mb-4 text-gray-800">How to <span className="text-emerald-500">Reduce Pollution</span></h2>
+                <p className="text-gray-500 max-w-[600px] mx-auto font-medium">Comprehensive solutions for each pollution source — from individual actions to systemic changes.</p>
               </div>
 
-              {/* Sectors */}
               {pollutionSectors.map((sector, sectorIndex) => (
-                <div
-                  key={sector.key}
-                  className="mb-12 opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]"
-                  style={{ animationDelay: `${sectorIndex * 0.1}s` }}
-                >
-                  {/* Sector Header */}
-                  <div
-                    className="flex items-center gap-4 mb-6 p-6 rounded-2xl border"
-                    style={{
-                      background: sector.bgColor,
-                      borderColor: `${sector.color}40`,
-                    }}
-                  >
-                    <div
-                      className="w-16 h-16 rounded-2xl flex items-center justify-center"
-                      style={{
-                        background: `${sector.color}30`,
-                        color: sector.color,
-                      }}
-                    >
+                <div key={sector.key} className="mb-12">
+                  <div className="flex items-center gap-4 mb-6 p-6 rounded-3xl border bg-white shadow-sm" style={{ borderColor: `${sector.color}20` }}>
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-gray-50" style={{ color: sector.color }}>
                       {sector.icon}
                     </div>
-
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-['Space_Grotesk'] text-2xl font-bold text-[#f0f5f2]">
-                          {sector.label}
-                        </h3>
-                        <span
-                          className="px-3 py-1 rounded-lg text-sm font-semibold"
-                          style={{
-                            background: `${sector.color}30`,
-                            color: sector.color,
-                          }}
-                        >
-                          {data.contribution?.[sector.key] ?? 0}% of pollution
+                        <h3 className="text-2xl font-bold text-gray-800">{sector.label}</h3>
+                        <span className="px-3 py-1 rounded-lg text-sm font-bold uppercase tracking-wider" style={{ background: `${sector.color}15`, color: sector.color }}>
+                          {data.contribution?.[sector.key] ?? 0}% Contribution
                         </span>
                       </div>
-                      <p className="text-sm text-[#9CA3AF]">
-                        {sector.description}
-                      </p>
+                      <p className="text-sm font-medium text-gray-500">{sector.description}</p>
                     </div>
-
-                    <TrendingDown className="w-8 h-8 text-[#22C55E]" />
+                    <TrendingDown className="w-8 h-8 text-emerald-500" />
                   </div>
 
-                  {/* Solutions Grid */}
-                  <div className="grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-6">
-                    {sector.detailedSolutions.map((solution, index) => (
-                      <div
-                        key={solution.title}
-                        className="p-7 rounded-2xl bg-[rgba(15,25,23,0.8)] border border-[rgba(37,58,52,0.5)] backdrop-blur-[20px]
-                         transition-all duration-300 hover:-translate-y-1"
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.borderColor = `${sector.color}50`;
-                          e.currentTarget.style.boxShadow = `0 20px 40px ${sector.color}15`;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.borderColor =
-                            "rgba(37,58,52,0.5)";
-                          e.currentTarget.style.boxShadow = "none";
-                        }}
-                      >
-                        <div className="flex items-center gap-3 mb-5">
-                          <div
-                            className="w-12 h-12 rounded-xl flex items-center justify-center"
-                            style={{
-                              background: `${sector.color}20`,
-                              color: sector.color,
-                            }}
-                          >
+                  <div className="grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-8">
+                    {sector.detailedSolutions.map((solution) => (
+                      <div key={solution.title} className="p-8 rounded-[2.5rem] bg-white border border-gray-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
+                        <div className="flex items-center gap-4 mb-6">
+                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-gray-50 group-hover:bg-emerald-50 transition-colors" style={{ color: sector.color }}>
                             {solution.icon}
                           </div>
-                          <h4 className="font-['Space_Grotesk'] text-lg font-semibold text-[#f0f5f2]">
-                            {solution.title}
-                          </h4>
+                          <h4 className="text-xl font-bold text-gray-800">{solution.title}</h4>
                         </div>
-
-                        <ul className="space-y-2">
+                        <ul className="space-y-4">
                           {solution.points.map((point, i) => (
-                            <li
-                              key={i}
-                              className={`flex items-start gap-3 py-2 ${
-                                i < solution.points.length - 1
-                                  ? "border-b border-[rgba(37,58,52,0.3)]"
-                                  : ""
-                              }`}
-                            >
-                              <CheckCircle2 className="w-[18px] h-[18px] text-[#22C55E] mt-[2px] shrink-0" />
-                              <span className="text-sm text-[#d1d5db] leading-relaxed">
-                                {point}
-                              </span>
+                            <li key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50/50 group-hover:bg-gray-50 transition-colors">
+                              <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5 shrink-0" />
+                              <span className="text-[15px] font-medium text-gray-600 leading-relaxed">{point}</span>
                             </li>
                           ))}
                         </ul>
@@ -506,56 +424,29 @@ const PollutionSources = () => {
 
           <section className="py-[60px] pb-[80px]">
             <div className="max-w-[1280px] mx-auto px-4">
-              <div
-                className="p-12 rounded-3xl text-center border border-[#22C55E33]
-      bg-gradient-to-br from-[rgba(34,197,94,0.1)] to-[rgba(20,184,166,0.1)]"
-              >
-                <Users className="w-12 h-12 text-[#22C55E] mx-auto mb-6" />
-
-                <h2 className="font-['Space_Grotesk'] text-[clamp(1.5rem,3vw,2rem)] font-bold mb-4">
-                  Every Action Counts
-                </h2>
-
-                <p className="text-[#6b7c75] max-w-[600px] mx-auto mb-8 text-base">
-                  Join thousands of citizens making sustainable choices. Track
-                  your impact, earn rewards, and contribute to cleaner air for
-                  everyone.
+              <div className="p-12 rounded-[3rem] text-center border border-emerald-100 bg-white shadow-sm relative overflow-hidden">
+                <div className="absolute inset-0 bg-emerald-50/30 pointer-events-none"></div>
+                <Users className="w-12 h-12 text-emerald-500 mx-auto mb-6 relative z-10" />
+                <h2 className="text-3xl font-black text-gray-800 mb-4 relative z-10">Every Action Counts</h2>
+                <p className="text-gray-500 max-w-[600px] mx-auto mb-8 text-lg font-medium relative z-10">
+                  Join thousands of citizens making sustainable choices. Track your impact, earn rewards, and contribute to cleaner air for everyone.
                 </p>
-
-                <div className="flex gap-4 justify-center flex-wrap">
+                <div className="flex gap-4 justify-center flex-wrap relative z-10">
                   <Link to="/dashboard">
-                    <button
-                      className="flex items-center gap-2 px-8 py-4 font-semibold rounded-xl text-[#080d0b]
-                       bg-gradient-to-br from-[#22C55E] to-[#14B8A6]
-                       shadow-[0_0_30px_rgba(34,197,94,0.4)]
-                       transition-all duration-300 hover:-translate-y-0.5
-                       hover:shadow-[0_0_50px_rgba(34,197,94,0.6)]"
-                    >
-                      Get Your Score
-                      <ArrowRight className="w-5 h-5" />
-                    </button>
+                    <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-14 px-10 rounded-2xl shadow-lg shadow-emerald-200">
+                      Get Your Score <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
                   </Link>
-
                   <Link to="/">
-                    <button
-                      className="px-8 py-4 font-semibold rounded-xl text-[#d1d5db]
-                       bg-[rgba(15,25,23,0.8)]
-                       border border-[rgba(37,58,52,0.5)]
-                       transition-colors duration-300
-                       hover:border-[#22C55E4D]"
-                    >
-                      Back to Home
-                    </button>
+                    <Button variant="outline" className="h-14 px-10 rounded-2xl border-emerald-100 text-emerald-600 hover:bg-emerald-50 font-bold">Back to Home</Button>
                   </Link>
                 </div>
               </div>
             </div>
           </section>
-        </div>
-        </div>
+        </>
       )}
-<Footer />
-    
+      <Footer />
     </div>
   );
 };

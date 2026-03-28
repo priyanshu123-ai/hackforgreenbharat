@@ -1,25 +1,22 @@
 import axios from "axios";
 
+// AQICN is faster for Indian cities (~200ms) vs open-meteo (~1-3s)
+const AQICN_KEY = process.env.AQICN_API_KEY;
+
 export const getAQIByCoords = async (lat, lon) => {
   try {
-    // Use Open-Meteo Air Quality API because it's free, doesn't require a key, and is reliable
-    const url = `https://air-quality-api.open-meteo.com/v1/air-quality`;
-    const res = await axios.get(url, {
-      params: {
-        latitude: lat,
-        longitude: lon,
-        current: "us_aqi",
-      },
-      timeout: 5000,
-    });
+    const res = await axios.get(
+      `https://api.waqi.info/feed/geo:${lat};${lon}/?token=${AQICN_KEY}`,
+      { timeout: 2500 }
+    );
 
-    if (res.data && res.data.current && res.data.current.us_aqi !== undefined) {
-      return { aqi: res.data.current.us_aqi };
+    if (res.data?.status === "ok" && res.data?.data?.aqi !== undefined) {
+      return { aqi: res.data.data.aqi };
     }
 
     return { aqi: null };
-  } catch (error) {
-    console.error("AQI fetch error:", error.message);
+  } catch {
+    // Silent fallback
     return { aqi: null };
   }
 };

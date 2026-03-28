@@ -5,8 +5,8 @@ import { Card } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
-import { Leaf, Recycle, ShoppingCart, Sparkles, Star, Filter, ExternalLink, Heart, Plus, Trash2 } from "lucide-react";
-
+import { Leaf, Recycle, ShoppingCart, Sparkles, Star, Filter, ExternalLink, Heart, Plus, Trash2, Search } from "lucide-react";
+import Footer from "./Footer";
 
 const CATEGORIES = [
   "Home Energy",
@@ -194,63 +194,69 @@ const PRODUCTS = [
 ];
 
 const Tag = ({ children }) => (
-  <span className="px-2 py-0.5 rounded-full text-xs bg-green-500/10 text-green-400 border border-green-500/20">
+  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 uppercase tracking-tight">
     {children}
   </span>
 );
 
 const Rating = ({ value }) => {
   const full = Math.floor(value);
-  const half = value - full >= 0.5;
   return (
-    <div className="flex items-center gap-1 text-yellow-400">
+    <div className="flex items-center gap-0.5 text-yellow-400">
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className={`w-4 h-4 ${i < full ? "fill-yellow-400" : half && i === full ? "fill-yellow-400/60" : ""}`} />
+        <Star key={i} className={`w-3.5 h-3.5 ${i < full ? "fill-yellow-400" : "text-gray-200"}`} />
       ))}
-      <span className="ml-1 text-xs text-gray-400">{value.toFixed(1)}</span>
+      <span className="ml-1 text-[11px] font-bold text-gray-400">{value.toFixed(1)}</span>
     </div>
   );
 };
 
 const ProductCard = ({ p, onAdd, onDelete }) => {
   return (
-    <Card className="bg-[#0b1411] border border-green-500/20 overflow-hidden hover:border-green-400/40 transition-all duration-300 relative group">
-      <div className="relative h-40 w-full overflow-hidden">
-        <img src={p.image} alt={p.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-        <div className="absolute top-2 left-2 flex gap-1">
+    <Card className="bg-white border border-emerald-50 overflow-hidden hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-500 relative group rounded-[2.5rem]">
+      <div className="relative h-48 w-full overflow-hidden">
+        <img src={p.image} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+        <div className="absolute top-4 left-4 flex flex-wrap gap-1">
           {p.badges.map((b) => (
             <Tag key={b}>{b}</Tag>
           ))}
         </div>
         <button 
           onClick={() => onDelete(p.id)}
-          className="absolute top-2 right-2 p-1.5 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+          className="absolute top-4 right-4 p-2 rounded-2xl bg-white/80 backdrop-blur-sm text-red-500 hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100 shadow-sm"
           title="Delete Product"
         >
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
-      <div className="p-4 space-y-2">
+      <div className="p-6 space-y-4">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h3 className="text-sm font-semibold text-white/90">{p.name}</h3>
-            <p className="text-xs text-gray-400">{p.brand} • {p.category}</p>
+            <h3 className="text-lg font-black text-gray-800 tracking-tight leading-tight">{p.name}</h3>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">{p.brand} • {p.category}</p>
           </div>
           <Rating value={p.rating} />
         </div>
-        <p className="text-xs text-gray-300/80">{p.whyBetter}</p>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-green-400 font-semibold">₹{p.price}</span>
-          <span className="text-xs text-teal-300/80 flex items-center gap-1"><Leaf className="w-3 h-3"/> {p.co2SavedKg}kg CO₂/yr</span>
+        <p className="text-sm font-medium text-gray-500 leading-relaxed line-clamp-2">{p.whyBetter}</p>
+        
+        <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+          <span className="text-2xl font-black text-emerald-600 tracking-tighter">₹{p.price}</span>
+          <div className="text-right">
+             <span className="text-[10px] font-black text-gray-400 uppercase block mb-0.5">Impact Score</span>
+             <span className="text-xs font-bold text-emerald-500 flex items-center gap-1 justify-end"><Leaf className="w-3 h-3"/> {p.co2SavedKg}kg CO₂/yr</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 pt-1">
-          <Button onClick={() => onAdd(p)} className="bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/30 h-8 px-3 flex items-center gap-1">
-            <ShoppingCart className="w-4 h-4" /> Add
+
+        <div className="grid grid-cols-2 gap-3 pt-2">
+          <Button onClick={() => onAdd(p)} className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl h-12 shadow-lg shadow-emerald-100 transition-all active:scale-95">
+            <ShoppingCart className="w-4 h-4 mr-2" /> Add
           </Button>
-          <a href={p.link} target="_blank" rel="noreferrer" className="h-8 px-3 inline-flex items-center gap-1 rounded-md border border-teal-500/30 text-teal-300 hover:bg-teal-500/20">
-            <ExternalLink className="w-4 h-4"/> Buy
+          <a href={p.link} target="_blank" rel="noreferrer" className="h-12 inline-flex items-center justify-center gap-2 rounded-2xl bg-gray-50 border border-gray-100 text-gray-700 font-bold hover:bg-white hover:border-emerald-200 transition-all text-sm">
+            <ExternalLink className="w-4 h-4"/> Buy Item
           </a>
-          <span className="ml-auto text-xs text-emerald-300/80 flex items-center gap-1"><Recycle className="w-3 h-3"/> AQI: {p.aqiImpact}</span>
+        </div>
+        <div className="flex justify-center">
+            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest flex items-center gap-1.5 bg-emerald-50/50 px-3 py-1 rounded-full"><Recycle className="w-3 h-3"/> AQI Exposure Impact: {p.aqiImpact}</span>
         </div>
       </div>
     </Card>
@@ -259,16 +265,16 @@ const ProductCard = ({ p, onAdd, onDelete }) => {
 
 const EcoProducts = () => {
   const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem("eco_products_v11");
+    const saved = localStorage.getItem("eco_products_v12");
     return saved ? JSON.parse(saved) : PRODUCTS;
   });
 
   useEffect(() => {
-    localStorage.setItem("eco_products_v11", JSON.stringify(products));
+    localStorage.setItem("eco_products_v12", JSON.stringify(products));
   }, [products]);
 
   const handleDeleteProduct = (id) => {
-    if (confirm("Are you sure you want to delete this product?")) {
+    if (confirm("Remove this eco-alternative from the catalog?")) {
       setProducts(products.filter(p => p.id !== id));
     }
   };
@@ -293,10 +299,10 @@ const EcoProducts = () => {
     if (!newProduct.name || !newProduct.price) return;
     const p = {
       ...newProduct,
-      id: "p" + (products.length + 1) + Date.now(), // unique ID
-      rating: 0,
-      aqiImpact: "Low", // Default
-      badges: ["New"],
+      id: "p" + (products.length + 1) + Date.now(),
+      rating: 4.0,
+      aqiImpact: "Low",
+      badges: ["Community Peak"],
       co2SavedKg: Number(newProduct.co2SavedKg) || 0,
       price: Number(newProduct.price)
     };
@@ -331,162 +337,187 @@ const EcoProducts = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050a08] pb-20">
+    <div className="min-h-screen bg-[#f0faf5] pb-24">
       <Navbar />
 
-      <div className="pt-24 max-w-[1200px] mx-auto px-4">
-        <div className="rounded-2xl border border-green-500/20 bg-[radial-gradient(1200px_200px_at_top,rgba(34,197,94,0.12),transparent)] p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-xs">
-                <Sparkles className="w-3 h-3"/> AI-Powered Alternatives
-              </div>
-              <h1 className="mt-3 text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-green-400 via-teal-400 to-blue-400">
-                Eco Products — Cleaner Choices, Lower Footprint
-              </h1>
-              <p className="mt-2 text-gray-300/80 text-sm max-w-2xl">
-                Curated items that reduce pollution generation or exposure. Sorted by CO₂ saved by default. Click Buy to open trusted marketplaces.
-              </p>
+      <section className="pt-[140px] pb-12 text-center relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none"></div>
+        <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+            <Sparkles className="w-4 h-4 text-emerald-600" />
+            <span className="text-sm font-semibold text-emerald-600">Premium Eco Marketplace</span>
+          </div>
+          <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black text-gray-900 tracking-tight leading-[0.9]">
+            Sustainable <span className="text-emerald-500">Living</span> Starts Here.
+          </h1>
+          <p className="mt-6 text-gray-500 text-lg font-medium max-w-2xl mx-auto">
+            Discover products that reduce carbon emissions and protect you from high pollution exposure. Curated for impact and quality.
+          </p>
+        </div>
+      </section>
+
+      <div className="max-w-[1240px] mx-auto px-6">
+        {/* FILTERS & SEARCH */}
+        <div className="bg-white/80 backdrop-blur-xl border border-emerald-50 rounded-[3rem] p-6 shadow-xl shadow-emerald-900/5 mb-12">
+          <div className="flex flex-col lg:flex-row gap-6 items-center">
+            <div className="flex-1 w-full relative">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Input 
+                value={query} 
+                onChange={(e) => setQuery(e.target.value)} 
+                placeholder="Search premium eco-friendly alternatives..." 
+                className="pl-14 pr-6 h-16 rounded-[2rem] bg-gray-50/50 border-gray-100 text-lg font-medium focus:bg-white focus:border-emerald-400 transition-all shadow-inner"
+              />
             </div>
 
-            <div className="flex flex-col gap-3 md:flex-row md:items-center w-full md:w-auto">
-               <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-green-500 hover:bg-green-600 text-black font-semibold shrink-0">
-                    <Plus className="w-4 h-4 mr-2"/> Add Product
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="bg-[#0b1411] border-green-500/20 text-green-100">
-                  <DialogHeader>
-                    <DialogTitle>Add New Eco Product</DialogTitle>
-                    <DialogDescription>Share a sustainable product with the community.</DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Name</Label>
-                        <Input value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="bg-black/20 border-green-500/20"/>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Brand</Label>
-                        <Input value={newProduct.brand} onChange={e => setNewProduct({...newProduct, brand: e.target.value})} className="bg-black/20 border-green-500/20"/>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Price (₹)</Label>
-                        <Input type="number" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="bg-black/20 border-green-500/20"/>
-                      </div>
-                      <div className="space-y-2">
-                         <Label>Category</Label>
-                         <select 
-                            value={newProduct.category} 
-                            onChange={e => setNewProduct({...newProduct, category: e.target.value})}
-                            className="w-full flex h-10 items-center justify-between rounded-md border border-green-500/20 bg-black/20 px-3 py-2 text-sm text-green-100 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                           {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                         </select>
-                      </div>
-                    </div>
-                     <div className="space-y-2">
-                        <Label>Image URL</Label>
-                        <Input value={newProduct.image} onChange={e => setNewProduct({...newProduct, image: e.target.value})} className="bg-black/20 border-green-500/20" placeholder="https://..."/>
-                      </div>
-                       <div className="space-y-2">
-                        <Label>Buy Link</Label>
-                        <Input value={newProduct.link} onChange={e => setNewProduct({...newProduct, link: e.target.value})} className="bg-black/20 border-green-500/20" placeholder="https://..."/>
-                      </div>
-                       <div className="space-y-2">
-                        <Label>Why fits better?</Label>
-                        <Input value={newProduct.whyBetter} onChange={e => setNewProduct({...newProduct, whyBetter: e.target.value})} className="bg-black/20 border-green-500/20"/>
-                      </div>
-                  </div>
-                  <DialogFooter>
-                    <Button onClick={handleAddProduct} className="bg-green-500 text-black hover:bg-green-600">Save Product</Button>
-                  </DialogFooter>
-                </DialogContent>
-               </Dialog>
+            <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto">
+                <select 
+                  value={cat} 
+                  onChange={(e) => setCat(e.target.value)} 
+                  className="h-14 px-6 rounded-2xl bg-white border border-gray-100 text-gray-700 font-bold text-sm shadow-sm hover:border-emerald-200 outline-none transition-all"
+                >
+                  <option>All Categories</option>
+                  {CATEGORIES.map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+                </select>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 w-full md:w-auto">
-              <div className="col-span-2 md:col-span-2">
-                <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search eco products..." className="bg-[#0b1411] border-green-500/20 text-green-100"/>
-              </div>
-              <select value={cat} onChange={(e) => setCat(e.target.value)} className="bg-[#0b1411] border border-green-500/20 rounded-md px-3 py-2 text-sm text-green-100">
-                <option>All</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-              <select value={sort} onChange={(e) => setSort(e.target.value)} className="bg-[#0b1411] border border-green-500/20 rounded-md px-3 py-2 text-sm text-green-100">
-                <option value="impact">Sort: Impact</option>
-                <option value="price">Sort: Price</option>
-                <option value="rating">Sort: Rating</option>
-              </select>
+                <select 
+                  value={sort} 
+                  onChange={(e) => setSort(e.target.value)} 
+                  className="h-14 px-6 rounded-2xl bg-white border border-gray-100 text-gray-700 font-bold text-sm shadow-sm hover:border-emerald-200 outline-none transition-all"
+                >
+                  <option value="impact">Sort by: CO₂ Impact</option>
+                  <option value="price">Sort by: Price</option>
+                  <option value="rating">Sort by: User Rating</option>
+                </select>
+
+                <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-14 px-8 rounded-2xl shadow-lg shadow-emerald-200">
+                      <Plus className="w-5 h-5 mr-2"/> Share Product
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-white border-none rounded-[3rem] p-10 max-w-2xl shadow-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-3xl font-black text-gray-900">Add Eco Product</DialogTitle>
+                      <DialogDescription className="text-gray-500 font-medium text-lg">Suggest a sustainable alternative to the community.</DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-6 py-6">
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label className="font-bold text-gray-700 ml-2">Product Name</Label>
+                          <Input value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="h-14 rounded-2xl bg-gray-50 border-gray-100"/>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="font-bold text-gray-700 ml-2">Brand / Maker</Label>
+                          <Input value={newProduct.brand} onChange={e => setNewProduct({...newProduct, brand: e.target.value})} className="h-14 rounded-2xl bg-gray-50 border-gray-100"/>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label className="font-bold text-gray-700 ml-2">Price (₹)</Label>
+                          <Input type="number" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="h-14 rounded-2xl bg-gray-50 border-gray-100"/>
+                        </div>
+                        <div className="space-y-2">
+                           <Label className="font-bold text-gray-700 ml-2">Category</Label>
+                           <select 
+                              value={newProduct.category} 
+                              onChange={e => setNewProduct({...newProduct, category: e.target.value})}
+                              className="w-full h-14 rounded-2xl bg-gray-50 border-gray-100 px-6 text-sm font-bold text-gray-700 outline-none"
+                            >
+                             {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                           </select>
+                        </div>
+                      </div>
+                       <div className="space-y-2">
+                          <Label className="font-bold text-gray-700 ml-2">Product Image (URL)</Label>
+                          <Input value={newProduct.image} onChange={e => setNewProduct({...newProduct, image: e.target.value})} className="h-14 rounded-2xl bg-gray-50 border-gray-100" placeholder="https://unsplash.com/..."/>
+                        </div>
+                         <div className="space-y-2">
+                          <Label className="font-bold text-gray-700 ml-2">Marketplace Link</Label>
+                          <Input value={newProduct.link} onChange={e => setNewProduct({...newProduct, link: e.target.value})} className="h-14 rounded-2xl bg-gray-50 border-gray-100" placeholder="https://amazon.in/..."/>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                      <Button onClick={handleAddProduct} className="h-14 w-full bg-emerald-500 text-white font-bold text-lg rounded-2xl shadow-lg shadow-emerald-200">Catalog Product</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
             </div>
-           </div>
           </div>
 
-
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
             {[{k:"Avg. CO₂ saved/yr",v:"+32 kg"},{k:"Plastic avoided",v:"~180 bags"},{k:"Exposure drop",v:"-15% AQI"},{k:"Green score boost",v:"+90 pts"}].map(x=> (
-              <Card key={x.k} className="bg-[#0b1411] border border-green-500/20 p-4">
-                <p className="text-xs text-gray-400">{x.k}</p>
-                <p className="text-lg font-bold text-green-300">{x.v}</p>
-              </Card>
+              <div key={x.k} className="bg-emerald-50/50 rounded-2xl p-4 border border-emerald-100/50">
+                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">{x.k}</p>
+                <p className="text-xl font-black text-gray-800">{x.v}</p>
+              </div>
             ))}
           </div>
         </div>
 
-
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
+        {/* PRODUCT GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {list.map((p) => (
-            <div key={p.id} className="group">
-              <ProductCard p={p} onAdd={addWishlist} onDelete={handleDeleteProduct} />
-            </div>
+            <ProductCard key={p.id} p={p} onAdd={addWishlist} onDelete={handleDeleteProduct} />
           ))}
         </div>
 
-
-        <div className="mt-10">
-          <h2 className="text-lg font-semibold text-green-200 flex items-center gap-2"><Heart className="w-4 h-4"/> Wishlist</h2>
-          {wishlist.length === 0 ? (
-            <p className="text-sm text-gray-400 mt-2">Add items to compare and purchase later.</p>
-          ) : (
-            <div className="mt-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {/* WISHLIST */}
+        {wishlist.length > 0 && (
+          <div className="mt-24">
+            <div className="flex items-center gap-4 mb-8">
+               <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                  <Heart className="w-6 h-6 text-emerald-500 fill-emerald-500" />
+               </div>
+               <h2 className="text-3xl font-black text-gray-900 tracking-tight">Saved Favorites</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {wishlist.map((w) => (
-                <Card key={w.id} className="bg-[#0b1411] border border-green-500/20 p-3 flex items-center gap-3">
-                  <img src={w.image} alt={w.name} className="w-16 h-12 object-cover rounded"/>
-                  <div className="flex-1">
-                    <p className="text-sm text-green-100">{w.name}</p>
-                    <p className="text-xs text-gray-400">₹{w.price} • {w.co2SavedKg}kg CO₂/yr</p>
+                <Card key={w.id} className="bg-white border border-emerald-50 p-4 flex items-center gap-4 rounded-[1.5rem] shadow-sm">
+                  <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-50 group">
+                    <img src={w.image} alt={w.name} className="w-full h-full object-cover transition-transform group-hover:scale-110"/>
                   </div>
-                  <a href={w.link} target="_blank" rel="noreferrer" className="text-xs inline-flex items-center gap-1 px-2 py-1 rounded-md border border-teal-500/30 text-teal-300 hover:bg-teal-500/20">
-                    <ExternalLink className="w-3 h-3"/> Buy
+                  <div className="flex-1">
+                    <p className="font-bold text-gray-800 leading-tight">{w.name}</p>
+                    <p className="text-xs font-bold text-emerald-500 mt-1">₹{w.price} • {w.co2SavedKg}kg Saved</p>
+                  </div>
+                  <a href={w.link} target="_blank" rel="noreferrer" className="p-3 rounded-xl bg-gray-50 border border-gray-100 text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 transition-all">
+                    <ExternalLink className="w-4 h-4"/>
                   </a>
                 </Card>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-
-        <div className="mt-12 mb-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* TIPS */}
+        <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6">
           {[{
             title:"Switch 5 bulbs to LED",
-            desc:"Saves ~75% energy per bulb and pays back within months.",
+            desc:"Saves ~75% energy per bulb and pays back within 4 months.",
           },{
-            title:"Carry a tote",
-            desc:"Skip plastic at stores. One tote replaces 150+ bags/year.",
+            title:"Plastic-Free Commute",
+            desc:"Shifting to Metro on high-AQI days reduces both exposure and emissions.",
           },{
-            title:"Prefer metro on high-AQI days",
-            desc:"Lower exposure and emissions versus car/bike.",
-          }].map(t => (
-            <Card key={t.title} className="bg-[#0b1411] border border-green-500/20 p-5">
-              <h3 className="text-green-200 font-semibold flex items-center gap-2"><Filter className="w-4 h-4"/> {t.title}</h3>
-              <p className="text-sm text-gray-400 mt-1">{t.desc}</p>
-            </Card>
+            title:"Compost Kitchen Waste",
+            desc:"Reduces landfill methane by 60% and creates natural fertilizer.",
+          }].map((t, i) => (
+            <div key={i} className="p-10 rounded-[3rem] bg-white border border-emerald-50 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100 mb-6">
+                <Filter className="w-5 h-5 text-emerald-500" />
+              </div>
+              <h3 className="text-xl font-black text-gray-900 tracking-tight mb-3">{t.title}</h3>
+              <p className="text-gray-500 font-medium leading-relaxed">{t.desc}</p>
+            </div>
           ))}
         </div>
+      </div>
+      
+      <div className="mt-24">
+        <Footer />
       </div>
     </div>
   );

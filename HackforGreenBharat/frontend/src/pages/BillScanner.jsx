@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Scan, Upload, Search, Loader2 } from "lucide-react";
+import { Scan, Upload, Search, Loader2, Sparkles, AlertCircle } from "lucide-react";
 import { serverUrl } from "@/main";
 
 const BillScanner = () => {
@@ -41,7 +41,6 @@ const BillScanner = () => {
       navigate("/bill-result", { state: { result: data } });
     } catch (err) {
       console.error(err);
-      alert("analyzing bill");
     } finally {
       setLoading(false);
     }
@@ -56,7 +55,6 @@ const BillScanner = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ billText: manualInput }),
-
         credentials: "include",
       });
 
@@ -64,49 +62,46 @@ const BillScanner = () => {
       navigate("/bill-result", { state: { result: data } });
     } catch (err) {
       console.error(err);
-      alert("Error analyzing");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "#0a0f0d" }}>
+    <div className="min-h-screen bg-[#f0faf5]">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-12 mt-16">
+      <div className="container mx-auto px-6 py-12 pt-32">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-white">Product </span>
-            <span className="text-emerald-400">Scanner</span>
+        <div className="text-center mb-12 max-w-2xl mx-auto">
+          <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-emerald-100">
+             <Scan className="w-10 h-10 text-emerald-500" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800 tracking-tight">
+            Eco <span className="text-emerald-500">Scanner</span>
           </h1>
-          <p className="text-gray-400 text-lg">
-            Scan any product to see its environmental impact on your score
+          <p className="text-gray-500 text-lg font-medium">
+            Scan your receipts or search products to track their environmental footprints and update your score.
           </p>
         </div>
 
         {/* Scanner Cards */}
-        <Card
-          className="max-w-4xl mx-auto border-emerald-500/20"
-          style={{ background: "rgba(15, 25, 23, 0.9)" }}
-        >
-          <CardContent className="p-8">
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-[2.5rem] border border-emerald-100 shadow-sm p-10">
+            <div className="grid md:grid-cols-2 gap-8 mb-10">
               {/* Scan Product */}
               <div
                 onClick={() => fileInputRef.current.click()}
-                className="border-2 border-dashed border-emerald-500/30 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500/60 hover:bg-emerald-500/5 transition-all duration-300"
-                style={{ minHeight: "200px" }}
+                className="group border-2 border-dashed border-emerald-200 rounded-3xl p-10 flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50/50 transition-all duration-300"
               >
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-4">
-                  <Scan className="w-8 h-8 text-emerald-400" />
+                <div className="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                  <Scan className="w-8 h-8 text-emerald-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  Scan Product
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  Take Photo
                 </h3>
-                <p className="text-gray-400 text-sm text-center">
-                  Upload a photo or scan barcode
+                <p className="text-gray-400 text-sm font-medium text-center">
+                  Use your camera to scan a product barcode or receipt
                 </p>
                 <input
                   ref={fileInputRef}
@@ -121,17 +116,16 @@ const BillScanner = () => {
               {/* Upload Image */}
               <div
                 onClick={() => imageInputRef.current.click()}
-                className="border-2 border-dashed border-emerald-500/30 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500/60 hover:bg-emerald-500/5 transition-all duration-300"
-                style={{ minHeight: "200px" }}
+                className="group border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50/50 transition-all duration-300"
               >
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-4">
-                  <Upload className="w-8 h-8 text-emerald-400" />
+                <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                  <Upload className="w-8 h-8 text-gray-400 group-hover:text-emerald-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  Upload Image
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  Upload Gallery
                 </h3>
-                <p className="text-gray-400 text-sm text-center">
-                  Choose from gallery
+                <p className="text-gray-400 text-sm font-medium text-center">
+                  Select an existing photo from your device's library
                 </p>
                 <input
                   ref={imageInputRef}
@@ -144,74 +138,71 @@ const BillScanner = () => {
             </div>
 
             {/* Divider */}
-            <div className="flex items-center gap-4 mb-8">
-              <div className="flex-1 h-px bg-emerald-500/20" />
-              <span className="text-gray-400 text-sm">or search manually</span>
-              <div className="flex-1 h-px bg-emerald-500/20" />
+            <div className="flex items-center gap-6 mb-10">
+              <div className="flex-1 h-px bg-gray-100" />
+              <span className="text-gray-400 font-bold text-xs uppercase tracking-widest">or search manually</span>
+              <div className="flex-1 h-px bg-gray-100" />
             </div>
 
             {/* Manual Search */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Input
-                placeholder="Enter product name or barcode..."
+                placeholder="Enter product name, category or barcode..."
                 value={manualInput}
                 onChange={(e) => setManualInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleManualSearch()}
-                className="flex-1 bg-transparent border-emerald-500/30 text-white placeholder:text-gray-500 focus:border-emerald-500"
+                className="flex-1 h-16 bg-gray-50/50 border-gray-100 text-gray-800 rounded-2xl px-6 text-lg focus:border-emerald-400 focus:bg-white transition-all shadow-inner"
               />
 
               <Button
                 onClick={handleManualSearch}
                 disabled={loading || !manualInput.trim()}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white px-6"
+                className="h-16 bg-emerald-500 hover:bg-emerald-600 text-white px-10 rounded-2xl font-bold text-lg shadow-lg shadow-emerald-200 transition-all"
               >
                 {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-6 h-6 animate-spin" />
                 ) : (
                   <>
-                    <Search className="w-5 h-5 mr-2" />
+                    <Search className="w-6 h-6 mr-3" />
                     Search
                   </>
                 )}
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* AI Helper Text */}
+          <div className="mt-8 flex items-center gap-4 bg-emerald-50/50 border border-emerald-100 rounded-3xl p-6 shadow-sm">
+             <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shrink-0">
+                <Sparkles className="w-6 h-6 text-emerald-500" />
+             </div>
+             <p className="text-sm font-medium text-emerald-700 leading-relaxed">
+               Our AI Scanner matches products against environmental databases to calculate water footprint, carbon emission, and recyclability.
+             </p>
+          </div>
+        </div>
 
         {/* Loading Overlay */}
         {loading && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            style={{ background: "#0a0f0d" }}
-          >
-            <div
-              className="rounded-2xl p-12 flex flex-col items-center"
-              style={{
-                background: "rgba(15, 25, 23, 0.9)",
-                minWidth: "400px",
-              }}
-            >
-              <div className="relative w-40 h-40 mb-8">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f0faf5]/90 backdrop-blur-sm">
+            <div className="bg-white rounded-[3rem] p-16 flex flex-col items-center shadow-2xl border border-emerald-50 max-w-md w-full mx-4">
+              <div className="relative w-48 h-48 mb-10">
+                <div className="absolute inset-0 rounded-full border-[6px] border-emerald-100" />
                 <div
-                  className="absolute inset-0 rounded-full border-4 border-emerald-500/30"
-                  style={{
-                    borderTopColor: "#10b981",
-                    borderRightColor: "#10b981",
-                    animation: "spin 1.5s linear infinite",
-                  }}
+                  className="absolute inset-0 rounded-full border-[6px] border-emerald-500 border-t-transparent"
+                  style={{ animation: "spin 1s linear infinite" }}
                 />
-                <div
-                  className="absolute inset-4 rounded-full flex items-center justify-center"
-                  style={{ background: "rgba(16, 185, 129, 0.1)" }}
-                >
-                  <Scan className="w-16 h-16 text-emerald-400" />
+                <div className="absolute inset-6 rounded-full bg-emerald-50/50 flex items-center justify-center">
+                  <Scan className="w-20 h-20 text-emerald-500 animate-pulse" />
                 </div>
               </div>
 
-              <h3 className="text-2xl font-bold text-white mb-2">
-                Analyzing Product...
+              <h3 className="text-3xl font-black text-gray-800 mb-3 tracking-tight">
+                Analyzing...
               </h3>
-              <p className="text-gray-400">Calculating environmental impact</p>
+              <p className="text-gray-500 font-bold text-center text-lg leading-tight uppercase tracking-tight">
+                Calculating Eco <span className="text-emerald-500">Impact</span>
+              </p>
             </div>
           </div>
         )}

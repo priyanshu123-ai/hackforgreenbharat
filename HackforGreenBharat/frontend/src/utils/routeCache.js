@@ -1,7 +1,7 @@
 const TTL = 10 * 60 * 1000; // 10 minutes
 
 export const getCachedRoute = (origin, destination) => {
-  const key = `route:${origin}:${destination}`;
+  const key = `route_v14:${origin?.toLowerCase()}:${destination?.toLowerCase()}`;
   const raw = localStorage.getItem(key);
 
   if (!raw) return null;
@@ -22,12 +22,17 @@ export const getCachedRoute = (origin, destination) => {
 };
 
 export const setCachedRoute = (origin, destination, data) => {
-  const key = `route:${origin}:${destination}`;
-  localStorage.setItem(
-    key,
-    JSON.stringify({
-      timestamp: Date.now(),
-      data,
-    })
-  );
+  const key = `route_v14:${origin?.toLowerCase()}:${destination?.toLowerCase()}`;
+  try {
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        timestamp: Date.now(),
+        data,
+      })
+    );
+  } catch (e) {
+    console.warn("Local storage quota exceeded, skipping cache for this route.", e);
+    // Optional: could try to clear oldest entries here
+  }
 };

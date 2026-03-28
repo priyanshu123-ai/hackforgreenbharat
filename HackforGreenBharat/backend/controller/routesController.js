@@ -4,22 +4,38 @@ import { geocodeCity } from "../utils/geocodeCity.js";
 import { getAQIByCoords } from "../utils/getAQI.js";
 import { reverseGeocode } from "../utils/reverseGeocode.js";
 
-/* 🔹 Sampling density (Reduced to avoid Timeouts) */
-const getSamplingStep = (distanceKm) => {
-  if (distanceKm > 50) return 120; // Was 80
-  return 40; // Was 25
+/* ============ CONSTANTS ============ */
+const osrmCache = new Map();
+const AQI_TIMEOUT_MS = 3000; // Per-AQI call timeout (3s max per point)
+const ROUTE_BUDGET_MS = 7000;  // Total AQI budget per route — ensures <10s
+
+/* ============ HELPERS ============ */
+
+/** Pick exactly 5 evenly-spaced points from geometry */
+const sampleRoutePoints = (geometry) => {
+  if (geometry.length <= 5) return geometry;
+  const step = Math.floor(geometry.length / 4);
+  const pts = [];
+  for (let i = 0; i < 4; i++) pts.push(geometry[i * step]);
+  pts.push(geometry[geometry.length - 1]);
+  return pts;
 };
 
-/* 🔹 Sample route points */
-const sampleRoutePoints = (geometry, step) => {
-  const points = [];
-  for (let i = 0; i < geometry.length; i += step) {
-    points.push(geometry[i]);
+/** Cap map geometry at maxPoints to keep payload tiny */
+const simplifyGeometry = (coords, maxPoints = 300) => {
+  if (coords.length <= maxPoints) return coords;
+  const step = Math.floor(coords.length / maxPoints);
+  const result = [];
+  for (let i = 0; i < coords.length; i += step) {
+    result.push(coords[i]);
+    if (result.length >= maxPoints) break;
   }
-  return points;
+  if (result[result.length - 1] !== coords[coords.length - 1]) {
+    result.push(coords[coords.length - 1]);
+  }
+  return result;
 };
 
-/* 🔹 AQI → Zone */
 const getZone = (aqi) => {
   if (aqi === null) return "Unknown";
   if (aqi > 200) return "High";
@@ -27,181 +43,194 @@ const getZone = (aqi) => {
   return "Low";
 };
 
-/* 🔹 Speed → Traffic */
 const getTrafficLevel = (speedKmph) => {
   if (speedKmph < 15) return "Heavy";
   if (speedKmph < 30) return "Moderate";
   return "Light";
 };
 
+/** Fetch AQI with a hard per-call timeout */
+const fetchAQI = async (lat, lon) => {
+  const aqiKey = `aqi:${lat.toFixed(3)},${lon.toFixed(3)}`;
+  let aqi = aqiCache.get(aqiKey);
+  if (aqi !== undefined) return aqi;
+
+  try {
+    const result = await Promise.race([
+      getAQIByCoords(lat, lon),
+      new Promise((resolve) => setTimeout(() => resolve({ aqi: null }), AQI_TIMEOUT_MS)),
+    ]);
+    aqi = result?.aqi ?? null;
+  } catch {
+    aqi = null;
+  }
+
+  aqiCache.set(aqiKey, aqi);
+  return aqi;
+};
+
+/** Fetch reverse geocode with a hard per-call timeout */
+const fetchArea = async (lat, lon) => {
+  const revKey = `rev_v3:${lat.toFixed(3)},${lon.toFixed(3)}`;
+  const cached = aqiCache.get(revKey);
+  if (cached) return cached;
+
+  try {
+    const result = await Promise.race([
+      reverseGeocode(lat, lon),
+      new Promise((resolve) => setTimeout(() => resolve("Along Route"), 4000)),
+    ]);
+    aqiCache.set(revKey, result);
+    return result;
+  } catch {
+    return "Along Route";
+  }
+};
+
+/* ============ CONTROLLER ============ */
 export const routeController = async (req, res) => {
   try {
     const { originCity, destinationCity } = req.body;
 
     if (!originCity || !destinationCity) {
-      return res.status(400).json({
-        success: false,
-        message: "originCity and destinationCity required",
-      });
+      return res.status(400).json({ success: false, message: "originCity and destinationCity required" });
     }
 
-    /* 🔥 CACHE */
-    const routeCacheKey = `route:${originCity}:${destinationCity}`;
+    /* ✅ Route-level cache */
+    const routeCacheKey = `route_v14:${originCity.toLowerCase()}:${destinationCity.toLowerCase()}`;
     const cached = aqiCache.get(routeCacheKey);
-    if (cached) return res.json(cached);
+    if (cached) {
+      console.log(`[CACHE HIT] ${routeCacheKey}`);
+      return res.json(cached);
+    }
 
-    /* 🌍 Geocode */
-    const origin = await geocodeCity(originCity);
-    const destination = await geocodeCity(destinationCity);
+    /* 🌍 Geocode both cities in parallel */
+    const [origin, destination] = await Promise.all([
+      geocodeCity(originCity),
+      geocodeCity(destinationCity),
+    ]);
 
-    /* 🛣️ OSRM */
-    const osrmURL = `https://router.project-osrm.org/route/v1/driving/${origin.lon},${origin.lat};${destination.lon},${destination.lat}?overview=full&geometries=geojson&alternatives=true`;
+    if (!origin || !destination) {
+      return res.status(400).json({ success: false, message: "Could not find one or both cities." });
+    }
 
-    const osrmRes = await axios.get(osrmURL, { timeout: 15000 });
+    /* 🛣️ OSRM with in-memory cache */
+    const osrmKey = `${origin.lon},${origin.lat};${destination.lon},${destination.lat}`;
+    let osrmData = osrmCache.get(osrmKey);
 
-    const routes = [];
+    if (!osrmData) {
+      const osrmURL = `https://router.project-osrm.org/route/v1/driving/${osrmKey}?overview=full&geometries=geojson&alternatives=true`;
+      const osrmRes = await axios.get(osrmURL, { timeout: 12000 });
+      osrmData = osrmRes.data;
+      osrmCache.set(osrmKey, osrmData);
+    }
 
-    for (let i = 0; i < osrmRes.data.routes.length; i++) {
-      const r = osrmRes.data.routes[i];
+    /* 🏎️ FAST FALLBACK MODE — no AQI, just geometry */
+    if (req.query.fast === "true") {
+      const fastRoutes = osrmData.routes.map((r, i) => ({
+        id: i,
+        name: `Quick Path ${i + 1}`,
+        distance: `${(r.distance / 1000).toFixed(1)} km`,
+        duration: `${Math.round(r.duration / 60)} min`,
+        avgAQI: null,
+        geometry: simplifyGeometry(r.geometry.coordinates.map(([lon, lat]) => ({ lat, lon }))),
+        pollutionSegments: [],
+        healthAdvice: "Calculating air quality...",
+        travelTip: "Just a moment while we find the cleanest air.",
+      }));
 
+      return res.json({ success: true, origin, destination, routes: fastRoutes, isFastFallback: true });
+    }
+
+    /* 🚀 CONCURRENT FULL ANALYSIS — all routes processed in parallel */
+    const routePromises = osrmData.routes.map(async (r, i) => {
       const distanceKm = r.distance / 1000;
       const durationMin = r.duration / 60;
-
-      /* 🚦 Traffic */
       const avgSpeed = distanceKm / (r.duration / 3600);
       const traffic = getTrafficLevel(avgSpeed);
 
-      const step = getSamplingStep(distanceKm);
+      const fullGeometry = r.geometry.coordinates.map(([lon, lat]) => ({ lat, lon }));
+      const geometry = simplifyGeometry(fullGeometry);
+      const sampledPoints = sampleRoutePoints(fullGeometry);
 
-      const geometry = r.geometry.coordinates.map(([lon, lat]) => ({
-        lat,
-        lon,
-      }));
+      /* ⏱️ Fetch all segment AQI + area in parallel with a global budget timeout */
+      const segmentPromises = sampledPoints.map(async (p) => {
+        const [aqi, area] = await Promise.all([fetchAQI(p.lat, p.lon), fetchArea(p.lat, p.lon)]);
+        return { lat: p.lat, lon: p.lon, aqi, zone: getZone(aqi), area };
+      });
 
-      const sampledPoints = sampleRoutePoints(geometry, step);
+      /* Race the entire segment batch against a hard budget */
+      const pollutionSegments = await Promise.race([
+        Promise.all(segmentPromises),
+        new Promise((resolve) =>
+          setTimeout(() => {
+            console.warn(`[TIMEOUT] Route ${i} — returning partial AQI`);
+            resolve(sampledPoints.map((p) => ({ lat: p.lat, lon: p.lon, aqi: null, zone: "Unknown", area: "Along Route" })));
+          }, ROUTE_BUDGET_MS)
+        ),
+      ]);
 
-      /* 🌫️ AQI + 📍 AREA (FIXED) */
-      /* 🌫️ AQI + 📍 AREA (FIXED) */
-      /* 🌫️ AQI + 📍 AREA (FIXED) */
-      const pollutionSegments = await Promise.all(
-        sampledPoints.map(async (p) => {
-          /* AQI */
-          const aqiKey = `aqi:${p.lat},${p.lon}`;
-          let aqi = aqiCache.get(aqiKey);
+      const validAQI = pollutionSegments.map((p) => p.aqi).filter((a) => a !== null);
+      const avgAQI = validAQI.length ? Math.round(validAQI.reduce((a, b) => a + b, 0) / validAQI.length) : null;
+      const score = (durationMin * 0.5) + ((avgAQI ?? 150) * 2);
 
-          if (aqi === undefined) {
-            try {
-              const res = await getAQIByCoords(p.lat, p.lon);
-              aqi = res?.aqi ?? null;
-              aqiCache.set(aqiKey, aqi);
-            } catch {
-              aqi = null;
-            }
-          }
-
-          /* 📍 AREA — ALWAYS TRY */
-          let area = "Along Route";
-          const revKey = `rev_v3:${p.lat},${p.lon}`; // New key v3
-          const cachedArea = aqiCache.get(revKey);
-
-          if (cachedArea) {
-            area = cachedArea;
-          } else {
-            try {
-              // No sleep needed for BigDataCloud
-              area = await reverseGeocode(p.lat, p.lon);
-              aqiCache.set(revKey, area);
-            } catch {
-              area = "Along Route";
-            }
-          }
-
-          return {
-            lat: p.lat,
-            lon: p.lon,
-            aqi,
-            zone: getZone(aqi),
-            area,
-          };
-        })
-      );
-
-      /* 📊 Average AQI */
-      const validAQI = pollutionSegments
-        .map((p) => p.aqi)
-        .filter((a) => a !== null);
-
-      const avgAQI = validAQI.length
-        ? Math.round(validAQI.reduce((a, b) => a + b, 0) / validAQI.length)
-        : null;
-      routes.push({
+      return {
         id: i,
-        name: `Route ${i + 1}`,
         distance: `${distanceKm.toFixed(1)} km`,
         duration: `${Math.round(durationMin)} min`,
         avgAQI,
+        score,
         traffic,
         avgSpeed: avgSpeed.toFixed(1),
         pollutionSegments,
         geometry,
-      });
-    }
-
-    /* 🕵️ Find characteristics to assign names */
-    if (routes.length === 0) {
-      throw new Error("No routes found from OSRM");
-    }
-
-    const findCleanest = routes.reduce((prev, curr) => (prev.avgAQI < curr.avgAQI ? prev : curr), routes[0]);
-    const findFastest = routes.reduce((prev, curr) => (parseFloat(prev.duration) < parseFloat(curr.duration) ? prev : curr), routes[0]);
-
-    const humanizedRoutes = routes.map((route) => {
-      let personality = "Balanced Voyager ✨";
-      let healthAdvice = "Safe for most travelers.";
-      let travelTip = "Keep an eye on the air as you go.";
-
-      if (route.id === findCleanest.id) personality = "The Nature-Lover 🍃";
-      if (route.id === findFastest.id && route.id !== findCleanest.id) personality = "Swift Discovery ⚡";
-      if (route.id === findCleanest.id && route.id === findFastest.id) personality = "The Perfect Path ✨";
-
-      if (route.avgAQI <= 50) {
-        healthAdvice = "Fresh air ahead! Perfect for a walk or bike ride.";
-        travelTip = "Great time to visit local parks.";
-      } else if (route.avgAQI <= 100) {
-        healthAdvice = "Air is fair. Enjoy your journey.";
-        travelTip = "A pleasant route with moderate air.";
-      } else if (route.avgAQI <= 200) {
-        healthAdvice = "Breathe carefully. Sensitive groups should wear a mask.";
-        travelTip = "Consider keeping windows slightly up.";
-      } else {
-        healthAdvice = "Severe pollution detected. Avoid opening windows.";
-        travelTip = "Enable air recirculation and stay safe.";
-      }
-
-      return {
-        ...route,
-        name: personality, // Human name
-        healthAdvice,
-        travelTip,
       };
     });
 
-    const response = {
-      success: true,
-      origin,
-      destination,
-      routes: humanizedRoutes,
-    };
+    const routes = await Promise.all(routePromises);
+
+    if (!routes.length) throw new Error("No routes found from OSRM");
+
+    /* 🏆 Sort: best score first (low = eco-friendly + fast) */
+    routes.sort((a, b) => a.score - b.score);
+
+    /* 💬 Humanize */
+    const humanizedRoutes = routes.map((route, index) => {
+      let name = `Efficient Option ${index + 1} ⚡`;
+      if (index === 0) name = "Eco-Champion 🍃";
+      else if (route.avgAQI !== null && route.avgAQI <= 50) name = "The Nature Path 🌿";
+
+      let healthAdvice = "Safe for most travelers.";
+      let travelTip = "Keep an eye on the air as you go.";
+
+      if (route.avgAQI === null) {
+        healthAdvice = "AQI data unavailable for this route.";
+        travelTip = "Check local conditions before you travel.";
+      } else if (route.avgAQI <= 50) {
+        healthAdvice = "Fresh air ahead! Great for any traveler.";
+        travelTip = "Windows down — enjoy the breeze!";
+      } else if (route.avgAQI <= 100) {
+        healthAdvice = "Air quality is acceptable. Enjoy your trip.";
+        travelTip = "A pleasant route with moderate air.";
+      } else if (route.avgAQI <= 200) {
+        healthAdvice = "Sensitive groups should wear a mask.";
+        travelTip = "Consider keeping windows slightly closed.";
+      } else {
+        healthAdvice = "Severe pollution detected. Close all windows.";
+        travelTip = "Enable air recirculation and stay safe.";
+      }
+
+      return { ...route, name, healthAdvice, travelTip };
+    });
+
+    const response = { success: true, origin, destination, routes: humanizedRoutes };
+
+    console.log(`[v14] ${originCity}→${destinationCity} | ${routes.length} routes | ${routes[0]?.pollutionSegments?.length} pts/route`);
 
     aqiCache.set(routeCacheKey, response);
     res.json(response);
   } catch (err) {
-    console.error("ROUTE CONTROLLER ERROR:", err);
-    import('fs').then(fs => fs.writeFileSync('backend-error.log', err.stack));
-    res.status(500).json({
-      success: false,
-      message: err.message,
-      stack: err.stack,
-    });
+    console.error("ROUTE CONTROLLER ERROR:", err.message);
+    res.status(500).json({ success: false, message: err.message });
   }
 };

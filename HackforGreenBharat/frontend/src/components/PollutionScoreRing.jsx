@@ -32,7 +32,7 @@ const PollutionScoreRing = ({
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
       <div
-        className="absolute inset-0 rounded-full blur-xl opacity-30"
+        className="absolute inset-0 rounded-full blur-2xl opacity-20"
         style={{ backgroundColor: color }}
       />
 
@@ -41,7 +41,7 @@ const PollutionScoreRing = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#1f2933"
+          stroke="#e2e8f0"
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -55,7 +55,7 @@ const PollutionScoreRing = ({
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          style={{ filter: `drop-shadow(0 0 12px ${color})` }}
+          style={{ filter: `drop-shadow(0 0 12px ${color}80)` }}
         />
       </svg>
 

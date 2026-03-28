@@ -14,10 +14,10 @@ import PollutionSources from "./pages/PollutionSources";
 import Profile from "./pages/Profile";
 import Leaderboard from "./pages/Leaderboard";
 
-import SendChallenge from "./components/Challenge.jsx/SendChallenge";
-import MyChallenges from "./components/Challenge.jsx/MyChallenges";
-import AcceptChallenge from "./components/Challenge.jsx/AcceptChallenge";
-import ChallengeDashboard from "./components/Challenge.jsx/ChallengeDashboard";
+import SendChallenge from "./components/Challenge/SendChallenge";
+import MyChallenges from "./components/Challenge/MyChallenges";
+import AcceptChallenge from "./components/Challenge/AcceptChallenge";
+import ChallengeDashboard from "./components/Challenge/ChallengeDashboard";
 import Insights from "./pages/Insights";
 import Presentation from "./pages/Pitch";
 import BillScanner from "./pages/BillScanner";

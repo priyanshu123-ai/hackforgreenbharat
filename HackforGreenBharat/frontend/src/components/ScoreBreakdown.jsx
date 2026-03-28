@@ -95,43 +95,41 @@ const ScoreBreakdown = ({ answers }) => {
 
   return (
     <div
-      className="p-6 rounded-2xl backdrop-blur-xl"
-      style={{
-        background: "rgba(15, 25, 23, 0.7)",
-        border: "1px solid rgba(37, 58, 52, 0.5)",
-      }}
+      className="p-6 rounded-3xl bg-white border border-emerald-100 shadow-sm"
     >
-      <h3 className="text-xl font-bold text-white mb-6">
-        Score Breakdown
+      <h3 className="text-xl font-bold text-gray-800 mb-6">
+        Impact Breakdown
       </h3>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         {categories.map((category, index) => (
           <div key={index} className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span style={{ color: category.color }}>
+                <div 
+                  className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-50/50"
+                  style={{ color: category.color }}
+                >
                   {category.icon}
-                </span>
-                <span className="text-white font-medium">
+                </div>
+                <span className="text-gray-700 font-semibold tracking-tight">
                   {category.label}
                 </span>
               </div>
-              <span className="text-gray-400 text-sm">
-                {category.value}/{category.max}
+              <span className="text-gray-400 font-bold text-xs uppercase tracking-widest">
+                {category.value} <span className="opacity-50">/ {category.max}</span>
               </span>
             </div>
 
             <div
-              className="h-2 rounded-full overflow-hidden"
-              style={{ background: "rgba(255, 255, 255, 0.1)" }}
+              className="h-2.5 rounded-full overflow-hidden bg-gray-100"
             >
               <div
                 className="h-full rounded-full transition-all duration-1000 ease-out"
                 style={{
                   width: `${(category.value / category.max) * 100}%`,
-                  background: `linear-gradient(90deg, ${category.color}, ${category.color}99)`,
-                  boxShadow: `0 0 10px ${category.color}50`,
+                  background: `linear-gradient(90deg, ${category.color}, ${category.color}CC)`,
+                  boxShadow: `0 2px 4px ${category.color}20`,
                 }}
               />
             </div>
