@@ -1,18 +1,16 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Leaf, 
-  AlertTriangle, 
-  Lightbulb, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Leaf,
+  AlertTriangle,
+  Lightbulb,
   TrendingUp,
   Users,
   Target,
   Award,
-  Globe
+  Globe,
 } from "lucide-react";
 
 const slides = [
@@ -23,15 +21,9 @@ const slides = [
     icon: Globe,
     content: {
       heading: "A Journey Through Delhi's Air",
-      story: `Meet Rahul, a software engineer living in Delhi. Every morning, his brother Amit leaves for office, navigating through the city's congested streets.
-
-One smoggy winter morning, Amit checked his usual route — the AQI was 387. Dangerous. His eyes burned, throat scratched. He wondered: "Is there a better way?"
-
-He tried Google Maps for the fastest route, but it didn't consider air quality. He switched to a bike some days, but wasn't sure if it actually helped. He bought "eco-friendly" products, but had no way to measure their real impact.
-
-Amit wasn't alone. Millions face this daily — wanting to make better choices but lacking the tools to measure, track, and improve.`,
-      image: "🌫️"
-    }
+      story: `Meet Rahul, a software engineer living in Delhi. Every morning, his brother Amit leaves for office, navigating through the city's congested streets.\n\nOne smoggy winter morning, Amit checked his usual route — the AQI was 387. Dangerous. His eyes burned, throat scratched. He wondered: "Is there a better way?"\n\nHe tried Google Maps for the fastest route, but it didn't consider air quality. He switched to a bike some days, but wasn't sure if it actually helped. He bought "eco-friendly" products, but had no way to measure their real impact.\n\nAmit wasn't alone. Millions face this daily — wanting to make better choices but lacking the tools to measure, track, and improve.`,
+      image: "🌫️",
+    },
   },
   {
     id: 2,
@@ -43,22 +35,22 @@ Amit wasn't alone. Millions face this daily — wanting to make better choices b
       problems: [
         {
           title: "No AQI-Aware Navigation",
-          description: "Maps show fastest routes, not healthiest. You might save 5 minutes but inhale 10x more toxins."
+          description: "Maps show fastest routes, not healthiest. You might save 5 minutes but inhale 10x more toxins.",
         },
         {
           title: "Invisible Carbon Footprint",
-          description: "People don't know how their daily choices — electricity, fuel, shopping — impact pollution."
+          description: "People don't know how their daily choices — electricity, fuel, shopping — impact pollution.",
         },
         {
           title: "Greenwashing Confusion",
-          description: "Products claim to be 'eco-friendly' but there's no standardized way to compare their real environmental impact."
+          description: "Products claim to be 'eco-friendly' but there's no standardized way to compare their real environmental impact.",
         },
         {
           title: "No Motivation to Change",
-          description: "Without gamification, social comparison, or visible progress, sustainable habits don't stick."
-        }
-      ]
-    }
+          description: "Without gamification, social comparison, or visible progress, sustainable habits don't stick.",
+        },
+      ],
+    },
   },
   {
     id: 3,
@@ -72,25 +64,25 @@ Amit wasn't alone. Millions face this daily — wanting to make better choices b
         {
           icon: "🎯",
           title: "Pollution Credit Score",
-          description: "Like a CIBIL score for your environmental impact. Track your 0-900 score based on energy, transport, shopping & lifestyle."
+          description: "Like a CIBIL score for your environmental impact. Track your 0–900 score based on energy, transport, shopping & lifestyle.",
         },
         {
           icon: "🗺️",
           title: "AQI-Aware Routes",
-          description: "Navigate smarter, not just faster. We rank routes by pollution exposure, helping you breathe easier."
+          description: "Navigate smarter, not just faster. We rank routes by pollution exposure, helping you breathe easier.",
         },
         {
           icon: "📦",
           title: "Product Scanner",
-          description: "Scan any product to see its environmental impact and discover sustainable alternatives instantly."
+          description: "Scan any product to see its environmental impact and discover sustainable alternatives instantly.",
         },
         {
           icon: "👨‍👩‍👧‍👦",
           title: "Family Competition",
-          description: "Challenge your family to reduce pollution together. Track, compare, and celebrate eco-wins."
-        }
-      ]
-    }
+          description: "Challenge your family to reduce pollution together. Track, compare, and celebrate eco-wins.",
+        },
+      ],
+    },
   },
   {
     id: 4,
@@ -103,13 +95,13 @@ Amit wasn't alone. Millions face this daily — wanting to make better choices b
         { value: "30%", label: "Reduction in toxic inhalation", description: "By choosing AQI-optimized routes" },
         { value: "45%", label: "More sustainable purchases", description: "When users see product impact scores" },
         { value: "2.5 Tons", label: "CO₂ saved per user/year", description: "Through behavior change & awareness" },
-        { value: "10M+", label: "Trees equivalent", description: "If 1M Delhi residents adopt EcoSense" }
+        { value: "10M+", label: "Trees equivalent", description: "If 1M Delhi residents adopt EcoSense" },
       ],
       beforeAfter: {
         before: "Without EcoSense: Amit inhales 12μg PM2.5 daily, uses single-use plastics, drives polluting routes",
-        after: "With EcoSense: 40% less pollution exposure, sustainable product choices, family competing to go green"
-      }
-    }
+        after: "With EcoSense: 40% less pollution exposure, sustainable product choices, family competing to go green",
+      },
+    },
   },
   {
     id: 5,
@@ -121,22 +113,22 @@ Amit wasn't alone. Millions face this daily — wanting to make better choices b
       categories: [
         {
           title: "🎮 Gamification",
-          items: ["Weekly pollution challenges", "Leaderboards with friends", "Badges & rewards", "Streak bonuses"]
+          items: ["Weekly pollution challenges", "Leaderboards with friends", "Badges & rewards", "Streak bonuses"],
         },
         {
           title: "🔔 Smart Alerts",
-          items: ["Predictive AQI forecasts", "High-pollution zone warnings", "Best travel time suggestions", "Real-time exposure tracking"]
+          items: ["Predictive AQI forecasts", "High-pollution zone warnings", "Best travel time suggestions", "Real-time exposure tracking"],
         },
         {
           title: "📊 Insights",
-          items: ["Route pollution heatmaps", "Monthly health reports", "Carbon footprint trends", "Improvement suggestions"]
+          items: ["Route pollution heatmaps", "Monthly health reports", "Carbon footprint trends", "Improvement suggestions"],
         },
         {
           title: "👪 Family Mode",
-          items: ["Household competition", "Combined family score", "Daily routine tracking", "Photo proof uploads"]
-        }
-      ]
-    }
+          items: ["Household competition", "Combined family score", "Daily routine tracking", "Photo proof uploads"],
+        },
+      ],
+    },
   },
   {
     id: 6,
@@ -150,9 +142,9 @@ Amit wasn't alone. Millions face this daily — wanting to make better choices b
         { step: 2, title: "Navigate", description: "Search routes, see AQI comparison, choose healthiest path" },
         { step: 3, title: "Scan", description: "Scan products, see impact, discover eco alternatives" },
         { step: 4, title: "Compete", description: "Join family challenges, climb leaderboards, earn badges" },
-        { step: 5, title: "Improve", description: "Track monthly reports, see your impact, celebrate wins" }
-      ]
-    }
+        { step: 5, title: "Improve", description: "Track monthly reports, see your impact, celebrate wins" },
+      ],
+    },
   },
   {
     id: 7,
@@ -161,53 +153,47 @@ Amit wasn't alone. Millions face this daily — wanting to make better choices b
     icon: Award,
     content: {
       heading: "Every Breath Counts",
-      message: "EcoSense isn't just an app — it's a movement towards conscious living. We're not asking people to change overnight. We're giving them the tools to see their impact, make informed choices, and celebrate every small win.",
+      message:
+        "EcoSense isn't just an app — it's a movement towards conscious living. We're not asking people to change overnight. We're giving them the tools to see their impact, make informed choices, and celebrate every small win.",
       cta: "Be Part of the Solution",
       stats: [
         { icon: "🌱", label: "Start tracking your pollution score today" },
         { icon: "🏆", label: "Challenge your family to go green" },
-        { icon: "🌍", label: "Join millions making Delhi breathable again" }
-      ]
-    }
-  }
+        { icon: "🌍", label: "Join millions making Delhi breathable again" },
+      ],
+    },
+  },
 ];
+
+/* ── shared card style ── */
+const card = {
+  background: "white",
+  border: "1px solid #e5e7eb",
+  borderRadius: "12px",
+  padding: "20px",
+};
 
 const Presentation = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const nextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    }
-  };
-
-  const prevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide(currentSlide - 1);
-    }
-  };
+  const nextSlide = () => { if (currentSlide < slides.length - 1) setCurrentSlide(currentSlide + 1); };
+  const prevSlide = () => { if (currentSlide > 0) setCurrentSlide(currentSlide - 1); };
 
   const slide = slides[currentSlide];
   const SlideIcon = slide.icon;
 
   const renderSlideContent = () => {
     switch (slide.type) {
+
       case "story":
         return (
           <div style={{ textAlign: "center" }}>
-            <p style={{ fontSize: "80px", marginBottom: "24px" }}>{slide.content.image}</p>
-            <h2 style={{ fontSize: "28px", fontWeight: "bold", color: "#4ade80", marginBottom: "24px" }}>
+            <p style={{ fontSize: "64px", marginBottom: "16px" }}>{slide.content.image}</p>
+            <h2 style={{ fontSize: "22px", fontWeight: "700", color: "#059669", marginBottom: "20px" }}>
               {slide.content.heading}
             </h2>
-            <div style={{ 
-              background: "rgba(34, 197, 94, 0.1)", 
-              border: "1px solid rgba(34, 197, 94, 0.2)", 
-              borderRadius: "16px", 
-              padding: "24px",
-              maxWidth: "700px",
-              margin: "0 auto"
-            }}>
-              <p style={{ color: "#d1d5db", lineHeight: "1.8", whiteSpace: "pre-line", textAlign: "left" }}>
+            <div style={{ ...card, maxWidth: "680px", margin: "0 auto", textAlign: "left" }}>
+              <p style={{ color: "#374151", lineHeight: "1.85", whiteSpace: "pre-line", fontSize: "14px" }}>
                 {slide.content.story}
               </p>
             </div>
@@ -217,17 +203,15 @@ const Presentation = () => {
       case "problem":
         return (
           <div>
-            <h2 style={{ fontSize: "28px", fontWeight: "bold", color: "#EF4444", textAlign: "center", marginBottom: "32px" }}>
+            <h2 style={{ fontSize: "22px", fontWeight: "700", color: "#dc2626", textAlign: "center", marginBottom: "24px" }}>
               {slide.content.heading}
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
-              {slide.content.problems.map((problem, index) => (
-                <Card key={index} style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
-                  <CardContent style={{ padding: "20px" }}>
-                    <h3 style={{ color: "#f0f5f2", fontWeight: "600", marginBottom: "8px" }}>{problem.title}</h3>
-                    <p style={{ color: "#9ca3af", fontSize: "14px" }}>{problem.description}</p>
-                  </CardContent>
-                </Card>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "14px" }}>
+              {slide.content.problems.map((p, i) => (
+                <div key={i} style={{ ...card, borderLeft: "3px solid #fca5a5" }}>
+                  <h3 style={{ fontWeight: "600", color: "#111827", marginBottom: "6px", fontSize: "14px" }}>{p.title}</h3>
+                  <p style={{ color: "#6b7280", fontSize: "13px", lineHeight: "1.6" }}>{p.description}</p>
+                </div>
               ))}
             </div>
           </div>
@@ -236,21 +220,19 @@ const Presentation = () => {
       case "solution":
         return (
           <div>
-            <div style={{ textAlign: "center", marginBottom: "32px" }}>
-              <h2 style={{ fontSize: "32px", fontWeight: "bold", color: "#4ade80", marginBottom: "8px" }}>
+            <div style={{ textAlign: "center", marginBottom: "24px" }}>
+              <h2 style={{ fontSize: "24px", fontWeight: "700", color: "#059669", marginBottom: "6px" }}>
                 {slide.content.heading}
               </h2>
-              <p style={{ color: "#9ca3af", fontSize: "18px" }}>{slide.content.tagline}</p>
+              <p style={{ color: "#6b7280", fontSize: "14px" }}>{slide.content.tagline}</p>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
-              {slide.content.features.map((feature, index) => (
-                <Card key={index} style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-                  <CardContent style={{ padding: "24px", textAlign: "center" }}>
-                    <p style={{ fontSize: "40px", marginBottom: "12px" }}>{feature.icon}</p>
-                    <h3 style={{ color: "#4ade80", fontWeight: "600", marginBottom: "8px" }}>{feature.title}</h3>
-                    <p style={{ color: "#9ca3af", fontSize: "14px" }}>{feature.description}</p>
-                  </CardContent>
-                </Card>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px" }}>
+              {slide.content.features.map((f, i) => (
+                <div key={i} style={{ ...card, textAlign: "center" }}>
+                  <p style={{ fontSize: "36px", marginBottom: "10px" }}>{f.icon}</p>
+                  <h3 style={{ fontWeight: "600", color: "#059669", marginBottom: "6px", fontSize: "14px" }}>{f.title}</h3>
+                  <p style={{ color: "#6b7280", fontSize: "13px", lineHeight: "1.6" }}>{f.description}</p>
+                </div>
               ))}
             </div>
           </div>
@@ -259,33 +241,27 @@ const Presentation = () => {
       case "impact":
         return (
           <div>
-            <h2 style={{ fontSize: "28px", fontWeight: "bold", color: "#4ade80", textAlign: "center", marginBottom: "32px" }}>
+            <h2 style={{ fontSize: "22px", fontWeight: "700", color: "#059669", textAlign: "center", marginBottom: "24px" }}>
               {slide.content.heading}
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-              {slide.content.stats.map((stat, index) => (
-                <Card key={index} style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-                  <CardContent style={{ padding: "20px", textAlign: "center" }}>
-                    <p style={{ fontSize: "32px", fontWeight: "bold", color: "#4ade80" }}>{stat.value}</p>
-                    <p style={{ color: "#f0f5f2", fontWeight: "500", marginBottom: "4px" }}>{stat.label}</p>
-                    <p style={{ color: "#9ca3af", fontSize: "12px" }}>{stat.description}</p>
-                  </CardContent>
-                </Card>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px", marginBottom: "16px" }}>
+              {slide.content.stats.map((s, i) => (
+                <div key={i} style={{ ...card, textAlign: "center", background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
+                  <p style={{ fontSize: "28px", fontWeight: "700", color: "#059669", margin: "0 0 4px" }}>{s.value}</p>
+                  <p style={{ fontWeight: "600", color: "#111827", fontSize: "13px", marginBottom: "2px" }}>{s.label}</p>
+                  <p style={{ color: "#9ca3af", fontSize: "11px" }}>{s.description}</p>
+                </div>
               ))}
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
-              <Card style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
-                <CardContent style={{ padding: "20px" }}>
-                  <h3 style={{ color: "#EF4444", fontWeight: "600", marginBottom: "8px" }}>❌ Before EcoSense</h3>
-                  <p style={{ color: "#9ca3af", fontSize: "14px" }}>{slide.content.beforeAfter.before}</p>
-                </CardContent>
-              </Card>
-              <Card style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-                <CardContent style={{ padding: "20px" }}>
-                  <h3 style={{ color: "#4ade80", fontWeight: "600", marginBottom: "8px" }}>✅ After EcoSense</h3>
-                  <p style={{ color: "#9ca3af", fontSize: "14px" }}>{slide.content.beforeAfter.after}</p>
-                </CardContent>
-              </Card>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "12px" }}>
+              <div style={{ ...card, borderLeft: "3px solid #fca5a5", background: "#fff5f5" }}>
+                <h3 style={{ fontWeight: "600", color: "#dc2626", marginBottom: "6px", fontSize: "13px" }}>❌ Before EcoSense</h3>
+                <p style={{ color: "#6b7280", fontSize: "13px", lineHeight: "1.6" }}>{slide.content.beforeAfter.before}</p>
+              </div>
+              <div style={{ ...card, borderLeft: "3px solid #6ee7b7", background: "#f0fdf4" }}>
+                <h3 style={{ fontWeight: "600", color: "#059669", marginBottom: "6px", fontSize: "13px" }}>✅ After EcoSense</h3>
+                <p style={{ color: "#6b7280", fontSize: "13px", lineHeight: "1.6" }}>{slide.content.beforeAfter.after}</p>
+              </div>
             </div>
           </div>
         );
@@ -293,24 +269,22 @@ const Presentation = () => {
       case "features":
         return (
           <div>
-            <h2 style={{ fontSize: "28px", fontWeight: "bold", color: "#4ade80", textAlign: "center", marginBottom: "32px" }}>
+            <h2 style={{ fontSize: "22px", fontWeight: "700", color: "#059669", textAlign: "center", marginBottom: "24px" }}>
               {slide.content.heading}
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
-              {slide.content.categories.map((category, index) => (
-                <Card key={index} style={{ background: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-                  <CardContent style={{ padding: "20px" }}>
-                    <h3 style={{ color: "#4ade80", fontWeight: "600", marginBottom: "12px" }}>{category.title}</h3>
-                    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                      {category.items.map((item, i) => (
-                        <li key={i} style={{ color: "#d1d5db", fontSize: "14px", marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
-                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#4ade80" }} />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px" }}>
+              {slide.content.categories.map((cat, i) => (
+                <div key={i} style={{ ...card }}>
+                  <h3 style={{ fontWeight: "600", color: "#111827", marginBottom: "12px", fontSize: "14px" }}>{cat.title}</h3>
+                  <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {cat.items.map((item, j) => (
+                      <li key={j} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#374151" }}>
+                        <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", flexShrink: 0 }} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
             </div>
           </div>
@@ -319,37 +293,26 @@ const Presentation = () => {
       case "demo":
         return (
           <div>
-            <h2 style={{ fontSize: "28px", fontWeight: "bold", color: "#4ade80", textAlign: "center", marginBottom: "32px" }}>
+            <h2 style={{ fontSize: "22px", fontWeight: "700", color: "#059669", textAlign: "center", marginBottom: "32px" }}>
               {slide.content.heading}
             </h2>
-            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "24px" }}>
-              {slide.content.steps.map((step, index) => (
-                <div key={index} style={{ textAlign: "center", position: "relative" }}>
-                  <div style={{ 
-                    width: "60px", 
-                    height: "60px", 
-                    borderRadius: "50%", 
-                    background: "linear-gradient(135deg, #22c55e, #16a34a)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "0 auto 12px",
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    color: "#030a06"
-                  }}>
-                    {step.step}
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px", alignItems: "flex-start" }}>
+              {slide.content.steps.map((step, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+                  <div style={{ textAlign: "center", maxWidth: "120px" }}>
+                    <div style={{
+                      width: "52px", height: "52px", borderRadius: "50%",
+                      background: "#10b981", color: "white",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      margin: "0 auto 10px", fontSize: "20px", fontWeight: "700"
+                    }}>
+                      {step.step}
+                    </div>
+                    <h3 style={{ fontWeight: "600", color: "#111827", marginBottom: "4px", fontSize: "13px" }}>{step.title}</h3>
+                    <p style={{ color: "#9ca3af", fontSize: "12px", lineHeight: "1.5" }}>{step.description}</p>
                   </div>
-                  <h3 style={{ color: "#f0f5f2", fontWeight: "600", marginBottom: "4px" }}>{step.title}</h3>
-                  <p style={{ color: "#9ca3af", fontSize: "12px", maxWidth: "120px" }}>{step.description}</p>
-                  {index < slide.content.steps.length - 1 && (
-                    <ChevronRight style={{ 
-                      position: "absolute", 
-                      right: "-20px", 
-                      top: "20px", 
-                      color: "#4ade80",
-                      display: window.innerWidth > 640 ? "block" : "none"
-                    }} />
+                  {i < slide.content.steps.length - 1 && (
+                    <ChevronRight style={{ color: "#d1d5db", marginTop: "14px", flexShrink: 0 }} size={20} />
                   )}
                 </div>
               ))}
@@ -360,38 +323,29 @@ const Presentation = () => {
       case "closing":
         return (
           <div style={{ textAlign: "center" }}>
-            <h2 style={{ fontSize: "36px", fontWeight: "bold", color: "#4ade80", marginBottom: "24px" }}>
+            <h2 style={{ fontSize: "28px", fontWeight: "700", color: "#059669", marginBottom: "20px" }}>
               {slide.content.heading}
             </h2>
-            <p style={{ color: "#d1d5db", fontSize: "18px", lineHeight: "1.8", maxWidth: "700px", margin: "0 auto 32px" }}>
+            <p style={{ color: "#374151", fontSize: "15px", lineHeight: "1.85", maxWidth: "640px", margin: "0 auto 28px" }}>
               {slide.content.message}
             </p>
-            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px", marginBottom: "32px" }}>
-              {slide.content.stats.map((stat, index) => (
-                <div key={index} style={{ 
-                  background: "rgba(34, 197, 94, 0.1)", 
-                  border: "1px solid rgba(34, 197, 94, 0.2)",
-                  borderRadius: "12px",
-                  padding: "16px 24px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px"
-                }}>
-                  <span style={{ fontSize: "24px" }}>{stat.icon}</span>
-                  <span style={{ color: "#d1d5db" }}>{stat.label}</span>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "12px", marginBottom: "28px" }}>
+              {slide.content.stats.map((s, i) => (
+                <div key={i} style={{ ...card, display: "flex", alignItems: "center", gap: "10px", padding: "12px 20px" }}>
+                  <span style={{ fontSize: "20px" }}>{s.icon}</span>
+                  <span style={{ color: "#374151", fontSize: "13px", fontWeight: "500" }}>{s.label}</span>
                 </div>
               ))}
             </div>
-            <Button style={{ 
-              background: "linear-gradient(135deg, #22c55e, #16a34a)", 
-              color: "#030a06", 
-              fontWeight: "600",
-              padding: "16px 32px",
-              fontSize: "18px"
+            <button style={{
+              display: "inline-flex", alignItems: "center", gap: "8px",
+              background: "#10b981", color: "white",
+              border: "none", borderRadius: "10px",
+              padding: "12px 28px", fontSize: "15px", fontWeight: "600", cursor: "pointer"
             }}>
-              <Leaf style={{ marginRight: "8px" }} />
+              <Leaf size={16} />
               {slide.content.cta}
-            </Button>
+            </button>
           </div>
         );
 
@@ -401,98 +355,104 @@ const Presentation = () => {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(to bottom, #030a06, #071a0f, #0a2915)" }} className="mt-16">
+    <div style={{ minHeight: "100vh", background: "#f0faf5", fontFamily: "'Inter', sans-serif" }} className="mt-16">
       <Navbar />
-      <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "32px 16px" }}>
-        {/* Progress Bar */}
-        <div style={{ display: "flex", gap: "8px", marginBottom: "24px" }}>
-          {slides.map((_, index) => (
+      <div style={{ maxWidth: "980px", margin: "0 auto", padding: "32px 20px" }}>
+
+        {/* ── Progress Bar ── */}
+        <div style={{ display: "flex", gap: "6px", marginBottom: "24px" }}>
+          {slides.map((_, i) => (
             <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              style={{ 
-                height: "8px", 
-                flex: 1, 
-                borderRadius: "4px", 
-                background: index === currentSlide ? "#4ade80" : index < currentSlide ? "rgba(74, 222, 128, 0.5)" : "rgba(34, 197, 94, 0.2)",
-                border: "none",
-                cursor: "pointer",
-                transition: "all 0.3s"
+              key={i}
+              onClick={() => setCurrentSlide(i)}
+              style={{
+                height: "5px", flex: 1, borderRadius: "99px", border: "none", cursor: "pointer",
+                background: i === currentSlide ? "#10b981" : i < currentSlide ? "#a7f3d0" : "#e5e7eb",
+                transition: "background 0.3s"
               }}
             />
           ))}
         </div>
 
-        {/* Slide Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", marginBottom: "32px" }}>
-          <div style={{ 
-            width: "48px", 
-            height: "48px", 
-            borderRadius: "50%", 
-            background: "rgba(34, 197, 94, 0.2)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
+        {/* ── Slide Header ── */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", marginBottom: "28px" }}>
+          <div style={{
+            width: "40px", height: "40px", borderRadius: "10px",
+            background: "#dcfce7", border: "1px solid #bbf7d0",
+            display: "flex", alignItems: "center", justifyContent: "center"
           }}>
-            <SlideIcon style={{ color: "#4ade80" }} />
+            <SlideIcon size={18} color="#059669" />
           </div>
-          <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "#f0f5f2" }}>{slide.title}</h1>
-          <span style={{ color: "#9ca3af" }}>({currentSlide + 1}/{slides.length})</span>
+          <h1 style={{ fontSize: "22px", fontWeight: "700", color: "#111827", margin: 0 }}>
+            {slide.title}
+          </h1>
+          <span style={{
+            fontSize: "12px", color: "#9ca3af", fontWeight: "500",
+            background: "white", border: "1px solid #e5e7eb",
+            borderRadius: "99px", padding: "3px 10px"
+          }}>
+            {currentSlide + 1} / {slides.length}
+          </span>
         </div>
 
-        {/* Slide Content */}
-        <div style={{ minHeight: "400px", marginBottom: "32px" }}>
+        {/* ── Slide Content ── */}
+        <div style={{ minHeight: "380px", marginBottom: "28px" }}>
           {renderSlideContent()}
         </div>
 
-        {/* Navigation */}
+        {/* ── Navigation ── */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Button 
-            onClick={prevSlide} 
+          <button
+            onClick={prevSlide}
             disabled={currentSlide === 0}
-            style={{ 
-              background: "rgba(34, 197, 94, 0.2)", 
-              border: "1px solid rgba(34, 197, 94, 0.3)", 
-              color: currentSlide === 0 ? "#6b7280" : "#4ade80",
-              opacity: currentSlide === 0 ? 0.5 : 1
+            style={{
+              display: "flex", alignItems: "center", gap: "6px",
+              padding: "9px 18px", borderRadius: "9px",
+              border: "1px solid #e5e7eb", background: "white",
+              fontSize: "13px", fontWeight: "600",
+              color: currentSlide === 0 ? "#d1d5db" : "#374151",
+              cursor: currentSlide === 0 ? "not-allowed" : "pointer",
+              transition: "all 0.15s"
             }}
           >
-            <ChevronLeft style={{ marginRight: "8px" }} />
-            Previous
-          </Button>
+            <ChevronLeft size={16} /> Previous
+          </button>
 
-          <div style={{ display: "flex", gap: "8px" }}>
-            {slides.map((_, index) => (
+          {/* Dot indicators */}
+          <div style={{ display: "flex", gap: "6px" }}>
+            {slides.map((_, i) => (
               <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                style={{ 
-                  width: "12px", 
-                  height: "12px", 
-                  borderRadius: "50%", 
-                  background: index === currentSlide ? "#4ade80" : "rgba(34, 197, 94, 0.2)",
-                  border: "none",
-                  cursor: "pointer",
-                  transform: index === currentSlide ? "scale(1.25)" : "scale(1)",
-                  transition: "all 0.3s"
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                style={{
+                  width: i === currentSlide ? "20px" : "8px",
+                  height: "8px",
+                  borderRadius: "99px",
+                  border: "none", cursor: "pointer",
+                  background: i === currentSlide ? "#10b981" : "#d1d5db",
+                  transition: "all 0.25s"
                 }}
               />
             ))}
           </div>
 
-          <Button 
-            onClick={nextSlide} 
+          <button
+            onClick={nextSlide}
             disabled={currentSlide === slides.length - 1}
-            style={{ 
-              background: currentSlide === slides.length - 1 ? "rgba(34, 197, 94, 0.2)" : "linear-gradient(135deg, #22c55e, #16a34a)", 
-              color: currentSlide === slides.length - 1 ? "#6b7280" : "#030a06",
-              opacity: currentSlide === slides.length - 1 ? 0.5 : 1
+            style={{
+              display: "flex", alignItems: "center", gap: "6px",
+              padding: "9px 18px", borderRadius: "9px", border: "none",
+              fontSize: "13px", fontWeight: "600",
+              background: currentSlide === slides.length - 1 ? "#e5e7eb" : "#10b981",
+              color: currentSlide === slides.length - 1 ? "#9ca3af" : "white",
+              cursor: currentSlide === slides.length - 1 ? "not-allowed" : "pointer",
+              transition: "all 0.15s"
             }}
           >
-            Next
-            <ChevronRight style={{ marginLeft: "8px" }} />
-          </Button>
+            Next <ChevronRight size={16} />
+          </button>
         </div>
+
       </div>
     </div>
   );
