@@ -79,21 +79,35 @@ const PollutionSources = () => {
     const id = ++requestRef.current;
     try {
       setLoading(true);
-      const validated = await validateCity(cityInput);
-      if (!validated) { alert("❌ Invalid city name"); setData(null); return; }
-      setInputCity(validated.city);
-      const res = await getCityPollution(validated.city);
+      setInputCity(cityInput);
+      // Bypass frontend validateCity to eliminate bottleneck, backend handles validation
+      const res = await getCityPollution(cityInput);
       if (id !== requestRef.current) return;
-      setData(res);
+      if (res && res.aqi) {
+        setData(res);
+      } else {
+        alert("❌ Invalid city or no data available");
+        setData(null);
+      }
+    } catch {
+        alert("❌ Error fetching data");
+        setData(null);
     } finally { if (id === requestRef.current) setLoading(false); }
   };
 
   const handleUseCurrentLocation = async () => {
     try {
       setLocLoading(true);
-      const city = await getCurrentCity();
+      // Hardcoded to Chandigarh and bypassed slow Geolocation prompt
+      const city = "Chandigarh";
       setInputCity(city);
-      fetchData(city);
+      const id = ++requestRef.current;
+      const res = await getCityPollution(city);
+      if (id === requestRef.current) {
+        if (res && res.aqi) setData(res);
+      }
+    } catch (err) {
+      console.error(err);
     } finally { setLocLoading(false); }
   };
 
@@ -205,32 +219,32 @@ const PollutionSources = () => {
           <section className="py-10 pb-20">
             <div className="max-w-[1280px] mx-auto px-4">
               <div className="text-center mb-12">
-                <h2 className="text-2xl font-bold text-gray-700 mb-3">
+                <h2 className="text-2xl font-bold text-stone-800 mb-3">
                   How to{" "}
-                  <span className="bg-gradient-to-br from-emerald-500 via-teal-500 to-blue-500 bg-clip-text text-transparent">Reduce Pollution</span>
+                  <span className="text-teal-500">Reduce Pollution</span>
                 </h2>
-                <p className="text-gray-400 max-w-[600px] mx-auto text-sm">
+                <p className="text-stone-400 max-w-[600px] mx-auto text-[15px] font-medium">
                   Comprehensive solutions for each pollution source — from individual actions to systemic changes.
                 </p>
               </div>
 
               {pollutionSectors.map((sector, sectorIndex) => (
                 <div key={sector.key} className="mb-10">
-                  <div className="flex items-center gap-4 mb-5 p-5 rounded-2xl border"
+                  <div className="flex items-center gap-4 mb-6 p-6 border-y bg-opacity-40"
                     style={{ background: sector.bgColor, borderColor: `${sector.color}30` }}>
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
                       style={{ background: `${sector.color}20`, color: sector.color }}>{sector.icon}</div>
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-1">
-                        <h3 className="text-xl font-bold text-gray-800">{sector.label}</h3>
-                        <span className="px-3 py-1 rounded-lg text-xs font-semibold"
+                        <h3 className="text-xl font-bold text-stone-800">{sector.label}</h3>
+                        <span className="px-3 py-1 rounded-full text-xs font-bold px-4 py-1.5"
                           style={{ background: `${sector.color}20`, color: sector.color }}>
                           {data.contribution?.[sector.key] ?? 0}% of pollution
                         </span>
                       </div>
-                      <p className="text-sm text-gray-500">{sector.description}</p>
+                      <p className="text-sm text-stone-600 font-medium">{sector.description}</p>
                     </div>
-                    <TrendingDown className="w-6 h-6 text-emerald-500" />
+                    
                   </div>
 
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-5">
@@ -242,13 +256,13 @@ const PollutionSources = () => {
                           <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: `${sector.color}15`, color: sector.color }}>
                             {solution.icon}
                           </div>
-                          <h4 className="font-semibold text-gray-800">{solution.title}</h4>
+                          <h4 className="font-bold text-stone-800 text-[15px]">{solution.title}</h4>
                         </div>
                         <ul className="space-y-2">
                           {solution.points.map((point, i) => (
                             <li key={i} className={`flex items-start gap-3 py-1.5 ${i < solution.points.length-1 ? "border-b border-gray-50" : ""}`}>
                               <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                              <span className="text-sm text-gray-500 leading-relaxed">{point}</span>
+                              <span className="text-sm text-stone-600 font-medium leading-relaxed">{point}</span>
                             </li>
                           ))}
                         </ul>
@@ -261,7 +275,7 @@ const PollutionSources = () => {
               {/* CTA */}
               <div className="mt-6 p-10 rounded-2xl text-center border border-emerald-100 bg-emerald-50">
                 <Users className="w-10 h-10 text-emerald-500 mx-auto mb-4" />
-                <h2 className="text-xl font-bold text-gray-700 mb-3">Every Action Counts</h2>
+                <h2 className="text-xl font-bold text-stone-800 mb-3">Every Action Counts</h2>
                 <p className="text-gray-400 max-w-[600px] mx-auto mb-7 text-sm">
                   Join thousands of citizens making sustainable choices. Track your impact, earn rewards, and contribute to cleaner air for everyone.
                 </p>
