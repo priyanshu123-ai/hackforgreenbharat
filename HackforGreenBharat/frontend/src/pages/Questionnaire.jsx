@@ -175,16 +175,16 @@ const Questionnaire = () => {
 
       <main className="pt-32 pb-12">
         <div className="container mx-auto px-6 max-w-2xl relative">
-            <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-100 blur-[60px] rounded-full -z-10 animate-pulse"></div>
+            
             
           {/* Progress Section */}
           <div className="mb-12">
             <div className="flex justify-between items-end mb-4">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 tracking-tight leading-none uppercase">Analysis <span className="text-emerald-500">Progress</span></h2>
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight uppercase">Analysis <span className="text-emerald-500">Progress</span></h2>
                 <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-2">{currentStep + 1} of {total} Milestones</p>
               </div>
-              <span className="text-4xl font-bold text-emerald-500 tracking-tighter">
+              <span className="text-2xl font-bold text-emerald-500 tracking-tight">
                 {Math.round(progress)}%
               </span>
             </div>
@@ -198,32 +198,32 @@ const Questionnaire = () => {
           </div>
 
           {/* Question Card */}
-          <Card className="bg-white border-none rounded-2xl shadow-lg shadow-emerald-900/5 overflow-hidden relative">
-            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
-                <Sparkles size={120} className="text-emerald-500" />
+          <Card className="bg-white border-none rounded-2xl shadow-sm border border-emerald-50 overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-12 opacity-[0.04] pointer-events-none -translate-y-4 translate-x-4">
+                <Sparkles size={160} className="text-emerald-500" />
             </div>
-            <CardHeader className="p-10 pb-6">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500 border border-emerald-100 shadow-sm">
+            <CardHeader className="p-8 pb-4">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-emerald-500 border border-emerald-100 bg-emerald-50/20">
                   {currentQuestion.icon}
                 </div>
-                <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider text-[10px] bg-emerald-50 px-3 py-1 rounded-lg">
+                <span className="font-bold text-emerald-500 uppercase tracking-widest text-[10px] bg-emerald-50 px-3 py-1 rounded-full">
                   {currentQuestion.category}
                 </span>
               </div>
 
-              <CardTitle className="text-gray-900 text-3xl font-bold leading-tight tracking-tight uppercase">
+              <CardTitle className="text-gray-900 text-3xl font-semibold leading-tight tracking-tight uppercase max-w-2xl">
                 {currentQuestion.question}
               </CardTitle>
 
               {currentQuestion.hint && (
-                <CardDescription className="text-gray-500 font-medium text-base italic mt-2">
+                <CardDescription className="text-gray-500 font-medium text-base italic mt-3">
                   "{currentQuestion.hint}"
                 </CardDescription>
               )}
             </CardHeader>
 
-            <CardContent className="p-10 pt-0 space-y-10">
+            <CardContent className="p-8 pt-0 space-y-10">
               {/* SLIDER COMPONENT */}
               {currentQuestion.type === "slider" && (
                 <div className="space-y-12 py-6">
@@ -238,12 +238,12 @@ const Questionnaire = () => {
                     />
                   </div>
 
-                  <div className="flex items-center justify-center p-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 relative group">
+                  <div className="flex items-center justify-center p-12 bg-gray-50/30 rounded-2xl border border-dashed border-gray-100 mt-8">
                     <div className="text-center">
-                        <span className="text-7xl font-bold text-emerald-500 tracking-tighter group-hover:scale-110 transition-transform block">
+                        <span className="text-[5rem] font-bold text-emerald-500 tracking-tighter leading-none block">
                         {answers[currentQuestion.id] ?? currentQuestion.min}
                         </span>
-                        <span className="text-gray-400 font-bold text-xl uppercase tracking-widest mt-2 block">
+                        <span className="text-gray-400 font-bold text-sm uppercase tracking-[0.2em] mt-3 block">
                         {currentQuestion.unit}
                         </span>
                     </div>
@@ -261,14 +261,14 @@ const Questionnaire = () => {
                   {currentQuestion.options.map((option) => (
                     <Label
                       key={option.value}
-                      className={`flex items-center space-x-4 p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 relative overflow-hidden group ${
+                      className={`flex items-center space-x-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 relative overflow-hidden group ${
                         answers[currentQuestion.id] === option.value
                           ? "border-emerald-500 bg-white shadow-xl shadow-emerald-900/10"
                           : "border-gray-50 bg-gray-50/50 hover:border-emerald-200 hover:bg-white"
                       }`}
                     >
                       <RadioGroupItem value={option.value} className="w-6 h-6 border-2 border-emerald-200 text-emerald-500" />
-                      <span className={`text-base font-medium tracking-wide ${answers[currentQuestion.id] === option.value ? 'text-emerald-700' : 'text-gray-600'}`}>
+                      <span className={`text-sm font-medium tracking-wide ${answers[currentQuestion.id] === option.value ? 'text-emerald-700' : 'text-gray-600'}`}>
                         {option.label}
                       </span>
                       {answers[currentQuestion.id] === option.value && (
@@ -285,7 +285,7 @@ const Questionnaire = () => {
                   variant="outline"
                   onClick={handlePrev}
                   disabled={currentStep === 0}
-                  className="h-12 flex-1 rounded-2xl border-none bg-gray-50 text-gray-400 font-bold text-base hover:bg-gray-100 transition-all uppercase tracking-widest"
+                  className="h-14 flex-1 rounded-2xl border-none bg-gray-50 text-gray-400 font-bold text-base hover:bg-gray-100 transition-all uppercase tracking-widest"
                 >
                   <ChevronLeft className="w-5 h-5 mr-2" /> Previous
                 </Button>
@@ -293,7 +293,7 @@ const Questionnaire = () => {
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed || isCalculating}
-                  className="h-12 flex-[1.5] bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-lg rounded-2xl shadow-xl shadow-emerald-100 transition-all active:scale-95 uppercase tracking-widest"
+                  className="h-14 flex-[1.5] bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-lg rounded-2xl shadow-sm transition-all active:scale-95 uppercase tracking-widest"
                 >
                   {isCalculating ? (
                       <div className="flex items-center gap-3">

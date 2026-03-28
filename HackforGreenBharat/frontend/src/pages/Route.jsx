@@ -216,9 +216,13 @@ const Routes = () => {
                 <Button
                   onClick={handleSearch}
                   disabled={loading}
-                  className="h-14 px-8 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl shadow-lg shadow-emerald-200 text-base active:scale-95 transition-all"
+                  className="h-14 px-8 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 text-base active:scale-95 transition-all flex items-center gap-2"
                 >
-                  {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Search className="w-6 h-6" />}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                    <>
+                      <Search className="w-5 h-5" /> Find Routes
+                    </>
+                  )}
                 </Button>
               </div>
             </Card>

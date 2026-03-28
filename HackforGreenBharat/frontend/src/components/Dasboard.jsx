@@ -112,12 +112,12 @@ const Dashboard = () => {
           {/* ROW 1 → Score + Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* Eco Score Card */}
-            <div className="bg-white rounded-2xl p-8 border border-emerald-50 shadow-2xl shadow-emerald-900/5 relative overflow-hidden group">
+            <div className="bg-white rounded-2xl p-8 border border-emerald-50 shadow-sm border border-gray-100 relative overflow-hidden group">
                <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:scale-110 transition-transform duration-700">
                  <Leaf size={100} className="text-emerald-500" />
                </div>
                <h3 className="text-2xl font-bold text-gray-900 mb-10 flex items-center gap-4">
-                 <div className="w-12 h-12 rounded-[1.2rem] bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                 <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
                     <Leaf className="w-6 h-6 text-emerald-500" />
                  </div>
                  Eco Impact Score
@@ -139,17 +139,17 @@ const Dashboard = () => {
           </div>
 
           {/* ROW 2 → AI Analysis (FULL WIDTH) */}
-          <Card className="border-none bg-white rounded-[3.5rem] shadow-2xl shadow-emerald-900/5 overflow-hidden">
-            <CardHeader className="bg-purple-500/5 px-10 pt-10 pb-6">
-              <CardTitle className="flex items-center gap-4 text-gray-900 text-2xl font-bold uppercase tracking-tight">
-                <div className="w-12 h-12 rounded-[1.2rem] flex items-center justify-center bg-purple-500 shadow-lg shadow-purple-100">
-                  <Brain className="w-6 h-6 text-white" />
+          <Card className="border-none bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <CardHeader className="bg-purple-500/5 px-8 pt-6 pb-4">
+              <CardTitle className="flex items-center gap-4 text-gray-900 text-base font-bold uppercase tracking-wide">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-purple-500 shadow-lg shadow-purple-100">
+                  <Brain className="w-5 h-5 text-white" />
                 </div>
                 Deep Neural Analysis
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="text-gray-700 leading-relaxed text-xl font-medium p-10">
+            <CardContent className="text-gray-700 leading-relaxed text-base font-normal p-8">
               {assessment ? (
                 <p className="italic">"{assessment.aiExplanation}"</p>
               ) : (
@@ -169,41 +169,41 @@ const Dashboard = () => {
           {/* ROW 3 → Precautions */}
           {assessment && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="bg-white rounded-2xl p-8 border border-emerald-50 shadow-xl shadow-emerald-900/5 relative overflow-hidden">
+              <div className="bg-white rounded-2xl p-8 border border-emerald-50 shadow-sm border border-gray-100 relative overflow-hidden">
                  <div className="absolute -bottom-10 -right-10 opacity-5">
-                    <ShieldCheck size={180} className="text-emerald-500" />
+                    <ShieldCheck size={100} className="text-emerald-500" />
                  </div>
-                 <h3 className="flex items-center gap-4 text-gray-900 font-bold text-2xl mb-10 uppercase tracking-tight">
-                    <div className="w-12 h-12 rounded-[1.2rem] bg-emerald-50 flex items-center justify-center border border-emerald-100">
-                      <ShieldCheck className="w-6 h-6 text-emerald-600" />
+                 <h3 className="flex items-center gap-4 text-gray-900 font-bold text-base mb-6 uppercase tracking-wide">
+                    <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                      <ShieldCheck className="w-5 h-5 text-emerald-600" />
                     </div>
                     Personal Growth
                  </h3>
                  <ul className="space-y-6 relative z-10">
                     {assessment.precautions.personal.map((p, i) => (
-                      <li key={i} className="flex gap-6 text-gray-800 bg-emerald-50/20 p-6 rounded-2xl border border-emerald-50 hover:bg-white hover:shadow-lg transition-all">
-                        <span className="w-10 h-10 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 shadow-lg shadow-emerald-100">{i+1}</span>
-                        <span className="font-bold text-base leading-snug">{p}</span>
+                      <li key={i} className="flex gap-6 text-gray-800 bg-white p-5 rounded-2xl border border-gray-50 shadow-sm hover:bg-white hover:shadow-lg transition-all">
+                        <span className="w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0">{i+1}</span>
+                        <span className="font-medium text-sm text-gray-700 leading-relaxed mt-1">{p}</span>
                       </li>
                     ))}
                   </ul>
               </div>
 
-              <div className="bg-white rounded-2xl p-8 border border-blue-50 shadow-xl shadow-blue-900/5 relative overflow-hidden">
+              <div className="bg-white rounded-2xl p-8 border border-blue-50 shadow-sm border border-gray-100 relative overflow-hidden">
                  <div className="absolute -bottom-10 -right-10 opacity-5">
-                    <Users size={180} className="text-blue-500" />
+                    <Users size={100} className="text-blue-500" />
                  </div>
-                 <h3 className="flex items-center gap-4 text-gray-900 font-bold text-2xl mb-10 uppercase tracking-tight">
-                    <div className="w-12 h-12 rounded-[1.2rem] bg-blue-50 flex items-center justify-center border border-blue-100">
-                      <Users className="w-6 h-6 text-blue-600" />
+                 <h3 className="flex items-center gap-4 text-gray-900 font-bold text-base mb-6 uppercase tracking-wide">
+                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
+                      <Users className="w-5 h-5 text-blue-600" />
                     </div>
                     Community Impact
                  </h3>
                  <ul className="space-y-6 relative z-10">
                     {assessment.precautions.area.map((p, i) => (
-                      <li key={i} className="flex gap-6 text-gray-800 bg-blue-50/20 p-6 rounded-2xl border border-blue-50 hover:bg-white hover:shadow-lg transition-all">
-                        <span className="w-10 h-10 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 shadow-lg shadow-blue-100">{i+1}</span>
-                        <span className="font-bold text-base leading-snug">{p}</span>
+                      <li key={i} className="flex gap-6 text-gray-800 bg-white p-5 rounded-2xl border border-gray-50 shadow-sm hover:bg-white hover:shadow-lg transition-all">
+                        <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0">{i+1}</span>
+                        <span className="font-medium text-sm text-gray-700 leading-relaxed mt-1">{p}</span>
                       </li>
                     ))}
                   </ul>
@@ -212,13 +212,13 @@ const Dashboard = () => {
           )}
 
           {/* ROW 4 → AQI CTA */}
-          <div className="bg-white rounded-[3.5rem] p-16 border border-sky-50 shadow-2xl shadow-sky-900/5 text-center relative overflow-hidden group">
+          <div className="bg-white rounded-3xl p-10 border border-sky-50 shadow-2xl shadow-sky-900/5 text-center relative overflow-hidden group">
              <div className="absolute inset-0 bg-gradient-to-b from-sky-50 to-transparent pointer-events-none"></div>
              <div className="relative z-10">
-                 <div className="w-20 h-20 rounded-[2.5rem] bg-sky-500 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-sky-100 group-hover:scale-110 transition-transform">
+                 <div className="w-20 h-20 rounded-2xl bg-sky-500 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-sky-100 group-hover:scale-110 transition-transform">
                     <Wind className="w-10 h-10 text-white" />
                  </div>
-                 <h3 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight uppercase">Live Path Insight</h3>
+                 <h3 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight uppercase">Live Path Insight</h3>
                  <p className="text-gray-500 max-w-md mx-auto mb-10 text-lg font-medium">
                    Unlock real-time atmosphere analysis and AQI-optimized routing across your city.
                  </p>
