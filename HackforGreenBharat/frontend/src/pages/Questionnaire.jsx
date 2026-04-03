@@ -24,7 +24,8 @@ import {
   Home,
   Sparkles,
   Leaf,
-  ArrowRight
+  ArrowRight,
+  Loader2
 } from "lucide-react";
 import { serverUrl } from "@/main";
 import Footer from "./Footer";

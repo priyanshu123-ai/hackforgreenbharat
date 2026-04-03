@@ -99,7 +99,7 @@ const PollutionSources = () => {
     try {
       setLocLoading(true);
       // Hardcoded to Chandigarh and bypassed slow Geolocation prompt
-      const city = "Chandigarh";
+      const city = "Jalandhar";
       setInputCity(city);
       const id = ++requestRef.current;
       const res = await getCityPollution(city);

@@ -77,7 +77,10 @@ const Routes = () => {
 
   const handleSearch = async () => {
     unlockSpeech();
-    if (!destination) return;
+    if (!origin || !destination) {
+      toast.error("Please enter both an origin and destination.");
+      return;
+    }
     setRoutes([]);
     setSelectedRoute(0);
     setLoading(true);
@@ -105,7 +108,8 @@ const Routes = () => {
         setDestinationCoords(eliteRes.data.destination);
       }
     } catch (err) {
-      toast.error("Had trouble finding that path.");
+      const errorMessage = err.response?.data?.message || "Had trouble finding that path.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -276,6 +280,7 @@ const Routes = () => {
                                 <div className="flex gap-2 mt-2">
                                     {route.avgAQI < 60 && <span className="bg-emerald-50 text-emerald-600 text-[9px] px-2 py-0.5 rounded-lg border border-emerald-100 uppercase font-black tracking-widest">Elite Air</span>}
                                     {route.name.includes("Swift") && <span className="bg-orange-50 text-orange-600 text-[9px] px-2 py-0.5 rounded-lg border border-orange-100 uppercase font-black tracking-widest">Nitro</span>}
+                                    {route.evStations?.length > 0 && <span className="bg-blue-50 text-blue-600 text-[9px] px-2 py-0.5 rounded-lg border border-blue-100 uppercase font-black tracking-widest">🔋 {route.evStations.length} EV Stations</span>}
                                 </div>
                             </div>
                             <AQIBadge value={route.avgAQI} size="lg" />
@@ -322,6 +327,46 @@ const Routes = () => {
             )}
           </div>
         </div>
+
+        {/* EV STATIONS SECTION */}
+        {routes[selectedRoute]?.evStations && routes[selectedRoute]?.evStations.length > 0 && (
+            <div className="mt-16 animate-in fade-in duration-1000">
+                <div className="flex items-center gap-4 mb-10">
+                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border border-blue-100 shadow-sm">
+                        <Zap className="w-6 h-6 text-blue-500" />
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">Charging Infrastructure</h3>
+                        <p className="text-gray-500 font-medium">Available EV charging stations along your route.</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {routes[selectedRoute].evStations.map((ev, i) => (
+                        <div key={ev.id} className="p-6 bg-white rounded-[1.5rem] border border-blue-50 shadow-sm hover:shadow-xl transition-all duration-500 relative group overflow-hidden">
+                             <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50/50 rounded-full blur-3xl -z-10 group-hover:bg-blue-50 transition-colors"></div>
+                            <div className="flex items-start justify-between mb-6">
+                                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
+                                    <Zap className="w-5 h-5 text-blue-500" />
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[.2em] mb-1">Type</p>
+                                    <p className="font-black uppercase text-sm text-blue-500">Fast Charge</p>
+                                </div>
+                            </div>
+                            <h4 className="text-lg font-extrabold text-gray-800 tracking-tight mb-2 truncate">{ev.name}</h4>
+                            <p className="text-xs font-bold text-gray-400 mb-6">{ev.lat?.toFixed(3)}°N, {ev.lon?.toFixed(3)}°E</p>
+                            
+                            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Operator<br/>Network</p>
+                                <div className="w-px h-6 bg-gray-200 mx-2"></div>
+                                <p className="text-sm font-extrabold tracking-tighter text-gray-700 uppercase">{ev.operator}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )}
 
         {/* BOTTOM SECTION - AIR QUALITY LOG */}
         {routes[selectedRoute]?.pollutionSegments && routes[selectedRoute]?.pollutionSegments.length > 0 && (

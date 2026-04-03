@@ -3,6 +3,7 @@ import aqiCache from "../utils/aqiCache.js";
 import { geocodeCity } from "../utils/geocodeCity.js";
 import { getAQIByCoords } from "../utils/getAQI.js";
 import { reverseGeocode } from "../utils/reverseGeocode.js";
+import { getEVStations } from "../utils/getEVStations.js";
 
 /* ============ CONSTANTS ============ */
 const osrmCache = new Map();
@@ -87,7 +88,7 @@ const fetchArea = async (lat, lon) => {
   }
 };
 
-/* ============ CONTROLLER ============ */
+
 export const routeController = async (req, res) => {
   try {
     const { originCity, destinationCity } = req.body;
@@ -97,18 +98,16 @@ export const routeController = async (req, res) => {
     }
 
     /* ✅ Route-level cache */
-    const routeCacheKey = `route_v14:${originCity.toLowerCase()}:${destinationCity.toLowerCase()}`;
+    const routeCacheKey = `route_v16:${originCity.toLowerCase()}:${destinationCity.toLowerCase()}`;
     const cached = aqiCache.get(routeCacheKey);
     if (cached) {
       console.log(`[CACHE HIT] ${routeCacheKey}`);
       return res.json(cached);
     }
 
-    /* 🌍 Geocode both cities in parallel */
-    const [origin, destination] = await Promise.all([
-      geocodeCity(originCity),
-      geocodeCity(destinationCity),
-    ]);
+    /* 🌍 Geocode both cities sequentially to avoid Nominatim 429 Ratelimits */
+    const origin = await geocodeCity(originCity);
+    const destination = await geocodeCity(destinationCity);
 
     if (!origin || !destination) {
       return res.status(400).json({ success: false, message: "Could not find one or both cities." });
@@ -159,13 +158,19 @@ export const routeController = async (req, res) => {
         return { lat: p.lat, lon: p.lon, aqi, zone: getZone(aqi), area };
       });
 
-      /* Race the entire segment batch against a hard budget */
-      const pollutionSegments = await Promise.race([
-        Promise.all(segmentPromises),
+      /* 🔋 Also kick off EV stations fetch */
+      const evStationsPromise = getEVStations(sampledPoints);
+
+      /* Race the entire segment batch (and EV) against a hard budget */
+      const [pollutionSegments, evStations] = await Promise.race([
+        Promise.all([Promise.all(segmentPromises), evStationsPromise]),
         new Promise((resolve) =>
           setTimeout(() => {
             console.warn(`[TIMEOUT] Route ${i} — returning partial AQI`);
-            resolve(sampledPoints.map((p) => ({ lat: p.lat, lon: p.lon, aqi: null, zone: "Unknown", area: "Along Route" })));
+            resolve([
+              sampledPoints.map((p) => ({ lat: p.lat, lon: p.lon, aqi: null, zone: "Unknown", area: "Along Route" })),
+              []
+            ]);
           }, ROUTE_BUDGET_MS)
         ),
       ]);
@@ -183,6 +188,7 @@ export const routeController = async (req, res) => {
         traffic,
         avgSpeed: avgSpeed.toFixed(1),
         pollutionSegments,
+        evStations,
         geometry,
       };
     });

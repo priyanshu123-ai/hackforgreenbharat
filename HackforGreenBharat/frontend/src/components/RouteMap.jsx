@@ -12,6 +12,13 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 /* ===== ICONS ===== */
+const evIcon = new L.divIcon({
+  className: "custom-ev-marker",
+  html: `<div style="background-color: #10b981; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 14px;">⚡</div>`,
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+});
+
 const originIcon = new L.Icon({
   iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/red-pushpin.png",
   iconSize: [32, 32],
@@ -103,7 +110,16 @@ const RouteMap = ({ routes, selectedRouteId, origin, destination }) => {
         const isSelected = route.id === selectedRouteId;
 
         if (isSelected && route.pollutionSegments?.length > 1) {
-          return route.pollutionSegments.map((seg, i) => {
+          const evMarkers = (route.evStations || []).map((ev) => (
+            <Marker key={`ev-${ev.id}`} position={[ev.lat, ev.lon]} icon={evIcon}>
+              <Popup>
+                <div style={{fontWeight: 700, color: "#10b981", textTransform: "uppercase"}}>{ev.name}</div>
+                <div style={{fontSize: "11px", color: "#666"}}>Operator: {ev.operator}</div>
+              </Popup>
+            </Marker>
+          ));
+
+          const routeLines = route.pollutionSegments.map((seg, i) => {
             if (i === route.pollutionSegments.length - 1) return null;
             const segColor = getAQIColor(seg.aqi);
             const nextSeg = route.pollutionSegments[i + 1];
@@ -137,6 +153,8 @@ const RouteMap = ({ routes, selectedRouteId, origin, destination }) => {
               </Fragment>
             );
           });
+
+          return [...evMarkers, ...routeLines];
         }
 
         /* Non-selected routes */
